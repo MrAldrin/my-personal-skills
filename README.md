@@ -1,6 +1,6 @@
-# Pi Personal Skills
+# My Personal Skills
 
-A personal collection of Pi skills shared across machines.
+A personal collection of Agent Skills shared across machines and compatible harnesses.
 
 ## Skills
 
@@ -14,15 +14,15 @@ A personal collection of Pi skills shared across machines.
 Clone this repository into a global Pi skill location:
 
 ```bash
-git clone <repository-url> ~/.agents/skills/pi-personal-skills
+git clone <repository-url> ~/.agents/skills/my-personal-skills
 ```
 
-Pi recursively discovers the `SKILL.md` files in the cloned directory. Alternatively, add the repository's `pi-personal-skills/` directory to the `skills` array in Pi settings.
+Pi recursively discovers the `SKILL.md` files in the cloned directory. Alternatively, add the repository's `skills/` directory to the `skills` array in Pi settings.
 
 For a Pi package install, use the GitHub repository URL:
 
 ```bash
-pi install git:github.com/<owner>/pi-personal-skills
+pi install git:github.com/<owner>/my-personal-skills
 ```
 
 After updating the clone or package, restart Pi or run `/reload`.
@@ -32,7 +32,7 @@ After updating the clone or package, restart Pi or run `/reload`.
 The transcript helper's standard-library test suite can be run with:
 
 ```bash
-python3 -m unittest discover -s pi-personal-skills/agent-memory/tests -v
+python3 -m unittest discover -s skills/agent-memory/tests -v
 ```
 
 The `agent-memory` skill uses Pi v3 session files and documents commands through `uv`.
