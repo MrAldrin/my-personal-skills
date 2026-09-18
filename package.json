@@ -1,0 +1,9 @@
+{
+  "name": "pi-personal-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal skills for the Pi coding agent",
+  "pi": {
+    "skills": ["./pi-personal-skills"]
+  }
+}

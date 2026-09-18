@@ -1,0 +1,11 @@
+# Python caches and test output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local/editor files
+.DS_Store
+
+# Mail transport artifacts; the extracted files are the source of truth
+/pi-personal-skills-source.txt
+/pi-personal-skills-source.txt.sha256
