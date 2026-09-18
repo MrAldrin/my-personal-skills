@@ -1,56 +1,109 @@
 ---
 name: version-control-workflow
-description: Use when creating (jj new), describing (jj describe), or structuring change descriptions and commits in Jujutsu (jj)
+description: Use when implementing tasks in a Jujutsu (jj) repository, splitting work into atomic changes, running jj new or jj describe, or reviewing a completed change stack.
 ---
 
-# Version control workflow using jj (jujutsu)
+# Jujutsu change workflow
 
-## Jujutsu (jj) Concepts (for Git-trained models)
+Use one development loop: plan logical changes, describe intent, implement, verify, and advance. Finish with a reviewable stack, not an extra summary merge.
 
-- **Change / Revision** = Equivalent to a Git commit.
-- **Working Copy** = Always represented by the active `@` change. Files are tracked automatically.
-- **`jj new`** = Creates a new empty change (commit) on top of the current one.
-- **`jj describe -m "..."`** = Sets or updates the commit message for the active change.
-- **`jj diff`** = Inspects diffs in the active change (like `git diff HEAD`).
+## Safety and scope
 
-## Description Format (Mandatory)
+- Use Jujutsu for repository changes. The working copy is the active `@` change; there is no separate Git staging/commit step.
+- The user manages `main`. Never move or modify the `main` bookmark.
+- Do not create or move `dev` or other bookmarks by default. If the user requests bookmark tracking, inspect its existing target first and ask before redirecting unrelated work. Track the completed change, not the empty working-copy child.
+- Preserve existing edits and history. Do not rewrite unrelated changes or mix the current task into them.
+- Do not push, merge, squash, or otherwise integrate the stack as part of normal task completion. Stop for user review; integration requires a separate explicit request.
 
-Every jj change description MUST follow this multiline structure:
+## Description format (mandatory)
 
-`<task-prefix>: <atomic change description>`
-*(optional blank line + detailed body)*
+Every task change description must use:
 
-- **`<task-prefix>`**: Descriptive label defining the work stream, formatted as `<category> - <goal>` (e.g., `model training - trying new features`, `docs - redesigning getting started`). Keep it identical across all related changes so rebased history stays clear.
-- **`<atomic change description>`**: Concise imperative summary of what this specific revision does.
-- **Line 1 (Title)**: Must be under 72 chars (`<task-prefix>: <atomic change description>`). This is all that appears in `jj log` / `git log --oneline`.
-- **Line 2**: Blank line.
-- **Line 3+ (Body, optional)**: Longer explanation, bullet points, reasoning, or trade-offs.
+```text
+<category> - <goal>: <atomic change description>
 
-### CLI Example
-```bash
-jj describe -m "model training - trying new features: add polynomial feature generation
-
-- generate degree-2 interactions for numerical features
-- update training pipeline config to toggle polynomial features
-- benchmark shows +1.2% improvement on test set"
+Optional body explaining reasoning, trade-offs, or verification.
 ```
 
-## Workflow
+- **Task prefix:** `<category> - <goal>` identifies the work stream. Keep it identical across all related changes.
+- **Atomic description:** a concise imperative summary of what this specific change does.
+- **Title:** the entire first line must be under 72 characters. Choose a short prefix so the summary has room.
+- **Body:** optional; separate it from the title with a blank line. Do not claim verification that was not performed.
+- A fresh empty working change may remain undescribed until its next task is known. Do not rename existing unrelated history to enforce this format.
 
-1. Start with intent on a clean change:
-   ```bash
-   jj new -m "<task-prefix>: planned intent"
-   ```
-2. Implement: Keep changes focused and atomic.
-3. Verify and update description: Compare diff against intent, then update message to reflect actual changes:
-   ```bash
-   jj diff
-   jj describe -m "<task-prefix>: actual change summary"
-   ```
+Example:
 
-## Rules & Pitfalls
+```bash
+jj describe -m "search - add filters: support filtering by status
 
-- **Mandatory prefix**: Every revision must include the `<task-prefix>: ` structure.
-- **Atomic changes**: One logical change per revision. Create another change only when work is independently reviewable or testable.
-- **No separate commits for transient files**: Agent scratchpads, temp notes, or intermediate debug files belong in the active change, not dedicated revisions.
-- **Work on a clean change**: Never append unrelated work to an existing change with edits. Use 'jj new' if the current change already has commits/diffs.
+Keep filtering server-side so pagination remains consistent.
+
+- add coverage for combined filters
+- verify existing unfiltered queries remain unchanged"
+```
+
+## Development loop
+
+### 1. Inspect and plan
+
+Run `jj status`, `jj log`, `jj bookmark list`, and `jj diff` before editing.
+
+Outline logical outcomes for the task. Each change should be independently reviewable and, where practical, testable; later changes may depend on earlier ones.
+
+- Split by outcome, not by file, tool call, or checklist item.
+- Keep behavior and its tests in the same change.
+- Keep small tasks in one change; do not manufacture extra steps.
+- Separate a prerequisite refactor only when it is useful to review independently.
+
+Reuse an appropriate empty `@` change. If `@` contains unrelated work, leave it intact and start a new change only if building on it is appropriate; otherwise ask where to base the task. If resuming this task's in-progress change, inspect it and continue rather than automatically creating another.
+
+### 2. Describe intent
+
+Before editing, describe the next logical outcome:
+
+```bash
+# When reusing an appropriate empty working change:
+jj describe -m "<task-prefix>: <planned imperative summary>"
+
+# When a new change is needed on top of the current one:
+jj new -m "<task-prefix>: <planned imperative summary>"
+```
+
+These are alternatives, not consecutive setup commands.
+
+### 3. Implement and verify
+
+Implement only the current logical outcome and its relevant tests.
+
+Run appropriate checks, inspect `jj diff`, and compare the result with the intended scope. Resolve unintended edits and validation failures before advancing, or report a blocker and stop. If checks cannot run, report that limitation rather than claiming success.
+
+Update the description to reflect the actual result:
+
+```bash
+jj describe -m "<task-prefix>: <actual imperative summary>"
+```
+
+Check the stable prefix, imperative summary, title length, and accuracy of any body.
+
+### 4. Advance
+
+Once the change is complete, use `jj new` to leave it behind and create a clean working change. For another logical outcome, return to step 2 and describe that empty change; do not create a second empty change unnecessarily.
+
+Example stack for one task:
+
+```text
+search - add filters: implement status filtering and tests
+search - add filters: connect filter controls to queries
+search - add filters: document supported filter combinations
+(empty working change)
+```
+
+The example is not a mandatory three-change template. Include documentation with the implementation when that makes a more coherent change.
+
+## Completion and cleanup
+
+- Inspect the final stack and `jj status`; leave an empty working change above the completed work.
+- Summarize the logical changes, checks performed, and any limitations or remaining work.
+- Stop for user review and testing. Do not create a feature-summary merge or automatically integrate the stack after approval.
+- Do not automatically delete plan files. Retain project documentation unless removal is requested or part of the agreed task.
+- Keep agent scratchpads and temporary debugging artifacts out of the delivered changes. Clean up only your own temporary artifacts before advancing; do not create dedicated scratch-file or cleanup-only changes. Intentional project cleanup may still be a legitimate task.
