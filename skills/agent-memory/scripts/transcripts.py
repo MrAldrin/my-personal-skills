@@ -296,17 +296,9 @@ def capture(path, workspace, previous, *, rereview=False):
             "last_entry_id": last_id, "new_entry_count": count}
 
 
-def snapshot(args):
-    workspace = workspace_path(args.workspace)
-    output = local_file(args.output, workspace)
-    if output == short_dir(workspace) / STATE_NAME:
-        fail(output, "reserved processing state path is not a batch output")
-    if output.exists():
-        fail(output, "refusing to overwrite existing batch")
-    if args.rereview and not args.session:
-        fail(output, "--rereview requires --session selection")
-    if args.session_dir:
-        directories = [canonical(args.session_dir)]
+def session_directories(workspace, session_dir):
+    if session_dir:
+        directories = [canonical(session_dir)]
     else:
         pi = "--" + re.sub(r"[/\\:]", "-", re.sub(r"^[/\\]", "", str(workspace))) + "--"
         claude = re.sub(r"[^A-Za-z0-9]", "-", str(workspace))
@@ -316,10 +308,14 @@ def snapshot(args):
     for directory in directories:
         if directory.exists() and not directory.is_dir():
             fail(directory, "session directory is not a directory")
+    return directories
+
+
+def session_sources(directories, selected=None):
     allowed = " or ".join(map(str, directories))
-    if args.session:
+    if selected:
         sources = []
-        for name in args.session:
+        for name in selected:
             if Path(name).is_absolute():
                 path = canonical(name)
             else:
@@ -338,6 +334,48 @@ def snapshot(args):
     for path in sources:
         if path.parent not in directories:
             fail(path, f"source escapes session directories {allowed}")
+    return sources
+
+
+def list_sessions(args):
+    workspace = workspace_path(args.workspace)
+    directories = session_directories(workspace, args.session_dir)
+    state, _ = load_state(workspace)
+    sessions = []
+    for path in session_sources(directories):
+        head, _ = header(path, workspace)
+        first_prompt, date = None, None
+        count = 0
+        last_offset = 0
+        for last_offset, _, raw in lines(path, defer_partial=True):
+            if date is None and isinstance(raw.get("timestamp"), str):
+                date = raw["timestamp"][:10]
+            count += raw["type"] != "session"
+            if first_prompt is None:
+                for entry in claude_entries(raw, {}, path) if head["format"] == "claude" else [raw]:
+                    message = entry_message(entry)
+                    if message.get("role") == "user" and visible(message.get("content")).strip():
+                        first_prompt = visible(message["content"]).strip().replace("\n", " ")[:160]
+        previous = state["files"].get(str(path))
+        sessions.append({"path": str(path), "date": date, "format": head["format"],
+                         "bytes": last_offset, "entries": count, "first_prompt": first_prompt,
+                         "checkpointed_bytes": previous["offset"] if previous else 0,
+                         "pending_bytes": last_offset - (previous["offset"] if previous else 0)})
+    return {"workspace": str(workspace), "session_dirs": list(map(str, directories)),
+            "sessions": sessions}
+
+
+def snapshot(args):
+    workspace = workspace_path(args.workspace)
+    output = local_file(args.output, workspace)
+    if output == short_dir(workspace) / STATE_NAME:
+        fail(output, "reserved processing state path is not a batch output")
+    if output.exists():
+        fail(output, "refusing to overwrite existing batch")
+    if args.rereview and not args.session:
+        fail(output, "--rereview requires --session selection")
+    directories = session_directories(workspace, args.session_dir)
+    sources = session_sources(directories, args.session)
     state, base = load_state(workspace)
     ranges = [capture(path, workspace, state["files"].get(str(path)), rereview=args.rereview)
               for path in sources]
@@ -671,6 +709,9 @@ def checkpoint(args):
 def parser():
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    listing = commands.add_parser("list", help="read-only session inventory for the selected workspace")
+    listing.add_argument("--workspace", required=True)
+    listing.add_argument("--session-dir")
     snap = commands.add_parser("snapshot")
     snap.add_argument("--workspace", required=True)
     snap.add_argument("--output", required=True)
@@ -702,7 +743,7 @@ def parser():
 def main():
     args = parser().parse_args()
     try:
-        result = {"snapshot": snapshot, "overview": overview, "detail": detail,
+        result = {"list": list_sessions, "snapshot": snapshot, "overview": overview, "detail": detail,
                   "checkpoint": checkpoint}[args.command](args)
         print(encoded(result))
     except (Invalid, OSError, KeyError, TypeError, ValueError) as error:

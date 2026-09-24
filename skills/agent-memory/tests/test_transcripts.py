@@ -782,6 +782,21 @@ class ClaudeTranscriptTests(unittest.TestCase):
         self.assertEqual(result.returncode == 0, ok, result.stderr)
         return json.loads(result.stdout) if ok else result.stderr
 
+    def test_list_is_read_only_and_tracks_checkpointed_bytes(self):
+        before = self.cli("list", "--workspace", self.workspace)
+        session = before["sessions"][0]
+        self.assertEqual(session["format"], "claude")
+        self.assertEqual(session["date"], "2026-09-24")
+        self.assertIn("Could source A", session["first_prompt"])
+        self.assertEqual(session["checkpointed_bytes"], 0)
+        self.assertEqual(session["pending_bytes"], session["bytes"])
+        self.assertFalse((self.short / ".transcript-state.json").exists())
+        self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
+        notes = self.short / "notes.md"
+        notes.write_text(json.loads(self.batch.read_text())["batch_id"])
+        self.cli("checkpoint", "--batch", self.batch, "--notes", notes)
+        self.assertEqual(self.cli("list", "--workspace", self.workspace)["sessions"][0]["pending_bytes"], 0)
+
     def test_default_discovery_overview_and_detail(self):
         result = self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
         self.assertEqual(result["file_count"], 1)
