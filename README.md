@@ -35,7 +35,7 @@ The transcript helper's standard-library test suite can be run with:
 python3 -m unittest discover -s skills/agent-memory/tests -v
 ```
 
-The `agent-memory` skill uses Pi v3 session files and documents commands through `uv`.
+The `agent-memory` skill reads both Pi v3 and Claude Code session files and documents commands through `uv`.
 
 ## Safety
 

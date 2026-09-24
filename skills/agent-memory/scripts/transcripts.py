@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Read Pi v3 transcripts without executing their contents or updating memory notes.
+"""Read Pi v3 and Claude Code transcripts without executing their contents or updating memory notes.
 
 Snapshot writes a manifest; checkpoint writes progress except for explicit re-reviews.
 All offsets are bytes at complete JSONL boundaries, not message timestamps.
+Claude Code entries are normalized to the Pi message shape before rendering.
 """
 
 import argparse
@@ -125,14 +126,92 @@ def header(path, workspace):
     if first is None:
         fail(path, "missing complete session header")
     _, raw, entry = first
-    if entry.get("type") != "session" or entry.get("version") != 3:
+    if entry.get("type") != "session":
+        # Claude Code has no header line; its first entry carrying a cwd is the launch cwd.
+        for _, raw, entry in lines(path):
+            if isinstance(entry.get("cwd"), str) and "sessionId" in entry:
+                break
+        else:
+            fail(path, "unsupported transcript; require Pi v3 or Claude Code entries with cwd")
+        head = {"id": entry.get("sessionId"), "cwd": entry["cwd"], "format": "claude"}
+    elif entry.get("version") != 3:
         fail(path, "unsupported session header/version; require Pi v3")
-    if not isinstance(entry.get("id"), str) or not entry["id"]:
+    else:
+        head = {"id": entry.get("id"), "cwd": entry.get("cwd"),
+                "parentSession": entry.get("parentSession"), "format": "pi"}
+    if not isinstance(head["id"], str) or not head["id"]:
         fail(path, "missing session id")
-    cwd = entry.get("cwd")
+    cwd = head["cwd"]
     if not isinstance(cwd, str) or not Path(cwd).is_absolute() or canonical(cwd) != workspace:
         fail(path, f"header cwd {cwd!r} does not match workspace {workspace}")
-    return entry, sha(raw)
+    return head, sha(raw)
+
+
+def entry_id(entry):
+    return entry.get("id", entry.get("uuid"))
+
+
+def validate_claude(message, source):
+    if not isinstance(message.get("role"), str):
+        fail(source, "invalid message role")
+    content = message.get("content")
+    if content is not None and not isinstance(content, (str, list)):
+        fail(source, "invalid message content")
+    for block in content if isinstance(content, list) else []:
+        if not isinstance(block, dict) or not isinstance(block.get("type"), str):
+            fail(source, "invalid content block")
+        kind = block["type"]
+        if (kind == "text" and not isinstance(block.get("text"), str)
+                or kind == "tool_use" and not (isinstance(block.get("id"), str)
+                                               and isinstance(block.get("name"), str)
+                                               and isinstance(block.get("input"), dict))
+                or kind == "tool_result" and not isinstance(block.get("tool_use_id"), str)):
+            fail(source, f"invalid {kind} block")
+
+
+def claude_entries(entry, names, source):
+    """Map one Claude Code entry to Pi-shaped entries; each tool_result becomes a toolResult."""
+    uid = entry.get("uuid")
+    base = {"id": uid, "parentId": entry.get("parentUuid"), "timestamp": entry.get("timestamp")}
+    message = entry.get("message")
+    if entry["type"] not in ("user", "assistant") or not isinstance(message, dict):
+        # Bookkeeping lines without a uuid (mode, titles, snapshots) are not conversation.
+        return [dict(base, type=entry["type"])] if uid else []
+    validate_claude(message, source)
+    if entry.get("isMeta"):
+        return [dict(base, type="meta")]
+    content = message.get("content")
+    if entry.get("isCompactSummary"):
+        return [dict(base, type="message", message={"role": "compactionSummary",
+                                                    "summary": visible(content)})]
+    if entry["type"] == "assistant":
+        blocks = content
+        if isinstance(content, list):
+            blocks = [{"type": "toolCall", "id": block["id"], "name": block["name"],
+                       "arguments": block["input"]} if block["type"] == "tool_use" else block
+                      for block in content]
+            names.update((block["id"], block["name"]) for block in blocks if block["type"] == "toolCall")
+        return [dict(base, type="message", message={"role": "assistant", "content": blocks})]
+    if not isinstance(content, list):
+        return [dict(base, type="message", message={"role": "user", "content": content})]
+    results = [block for block in content if block["type"] == "tool_result"]
+    rest = [block for block in content if block["type"] != "tool_result"]
+    messages = [{"role": "user", "content": rest}] if rest or not results else []
+    messages += [{"role": "toolResult", "toolCallId": block["tool_use_id"],
+                  "toolName": names.get(block["tool_use_id"]), "content": block.get("content"),
+                  "isError": block.get("is_error") is True} for block in results]
+    return [dict(base, type="message", id=uid if len(messages) == 1 else f"{uid}/{index}",
+                 message=message) for index, message in enumerate(messages)]
+
+
+def entries(path, head, start=0, end=None, names=None):
+    """Stream Pi-shaped entries; share `names` across calls to label later tool results."""
+    names = {} if names is None else names
+    for offset, _, entry in lines(path, start, end):
+        if head["format"] == "pi":
+            yield entry
+        else:
+            yield from claude_entries(entry, names, f"{path} before byte {offset}")
 
 
 def boundary_line(path, offset):
@@ -201,13 +280,16 @@ def capture(path, workspace, previous, *, rereview=False):
     end, last_id, last_anchor, count = start, previous["last_entry_id"] if previous else None, anchor, 0
     # Freeze the upper bound before streaming. Appends are for the next snapshot.
     ceiling = path.stat().st_size
+    names = {}
     for next_end, raw, entry in lines(path, start, ceiling, defer_partial=True):
+        if head["format"] == "claude":
+            claude_entries(entry, names, f"{path} before byte {next_end}")
         digest.update(raw)
         end, last_anchor = next_end, sha(raw)
         if entry["type"] != "session":
-            last_id = entry.get("id")
+            last_id = entry_id(entry)
             count += 1
-    return {"path": str(path), "session_id": head["id"],
+    return {"path": str(path), "session_id": head["id"], "format": head["format"],
             "parent_session": head.get("parentSession"), "header_sha256": head_hash,
             "from_offset": start, "to_offset": end, "prior_anchor_sha256": anchor,
             "range_sha256": digest.hexdigest(), "anchor_sha256": last_anchor,
@@ -223,23 +305,39 @@ def snapshot(args):
         fail(output, "refusing to overwrite existing batch")
     if args.rereview and not args.session:
         fail(output, "--rereview requires --session selection")
-    safe = "--" + re.sub(r"[/\\:]", "-", re.sub(r"^[/\\]", "", str(workspace))) + "--"
-    directory = canonical(args.session_dir or Path.home() / ".pi/agent/sessions" / safe)
-    if directory.exists() and not directory.is_dir():
-        fail(directory, "session directory is not a directory")
+    if args.session_dir:
+        directories = [canonical(args.session_dir)]
+    else:
+        pi = "--" + re.sub(r"[/\\:]", "-", re.sub(r"^[/\\]", "", str(workspace))) + "--"
+        claude = re.sub(r"[^A-Za-z0-9]", "-", str(workspace))
+        directories = [canonical(Path.home() / ".pi/agent/sessions" / pi),
+                       canonical(Path.home() / ".claude/projects" / claude)]
+    directories = list(dict.fromkeys(directories))
+    for directory in directories:
+        if directory.exists() and not directory.is_dir():
+            fail(directory, "session directory is not a directory")
+    allowed = " or ".join(map(str, directories))
     if args.session:
         sources = []
         for name in args.session:
-            path = canonical(name if Path(name).is_absolute() else directory / name)
-            if path.parent != directory or not path.is_file():
-                fail(path, f"selected session must be a file directly inside {directory}")
+            if Path(name).is_absolute():
+                path = canonical(name)
+            else:
+                found = [canonical(directory / name) for directory in directories
+                         if (directory / name).is_file()]
+                if len(found) > 1:
+                    fail(name, f"ambiguous session name in {allowed}")
+                path = found[0] if found else canonical(directories[0] / name)
+            if path.parent not in directories or not path.is_file():
+                fail(path, f"selected session must be a file directly inside {allowed}")
             sources.append(path)
     else:
-        sources = list(directory.glob("*.jsonl")) if directory.exists() else []
+        sources = [path for directory in directories if directory.exists()
+                   for path in directory.glob("*.jsonl")]
     sources = sorted(set(canonical(path) for path in sources))
     for path in sources:
-        if path.parent != directory:
-            fail(path, f"source escapes session directory {directory}")
+        if path.parent not in directories:
+            fail(path, f"source escapes session directories {allowed}")
     state, base = load_state(workspace)
     ranges = [capture(path, workspace, state["files"].get(str(path)), rereview=args.rereview)
               for path in sources]
@@ -247,8 +345,9 @@ def snapshot(args):
     batch = {"version": VERSION, "batch_id": uuid.uuid4().hex, "workspace": str(workspace),
              "review_mode": mode,
              "created_at": datetime.now(timezone.utc).isoformat(), "base_state_sha256": base,
-             "coverage": {"session_dir": str(directory), "workspace": str(workspace),
-                          "directory_missing": not directory.exists(), "selected_only": bool(args.session)},
+             "coverage": {"session_dirs": list(map(str, directories)), "workspace": str(workspace),
+                          "missing_dirs": [str(item) for item in directories if not item.exists()],
+                          "selected_only": bool(args.session)},
              "ranges": ranges}
     with output.open("x", encoding="utf-8") as stream:
         stream.write(encoded(batch) + "\n")
@@ -284,7 +383,7 @@ def load_batch(name):
             fail(source, "reversed captured range")
         last_raw = boundary_line(source, item["to_offset"])
         last_entry = json_object(last_raw, source) if last_raw else {}
-        last_id = last_entry.get("id") if last_entry.get("type") != "session" else None
+        last_id = entry_id(last_entry) if last_entry.get("type") != "session" else None
         if last_id != item["last_entry_id"]:
             fail(source, "captured last_entry_id does not match boundary")
         digest = hashlib.sha256()
@@ -322,8 +421,8 @@ def retained_entries(entry):
                    "parentId": entry.get("id"), "message": message}
 
 
-def detail_entries(path):
-    for _, _, entry in lines(path):
+def detail_entries(path, head):
+    for entry in entries(path, head):
         yield entry
         yield from retained_entries(entry)
 
@@ -387,18 +486,19 @@ def overview_text(batch):
     yield "Coverage: " + encoded(batch["coverage"]) + "\n"
     for item in batch["ranges"]:
         path = Path(item["path"])
-        yield f"Session {path} id={item['session_id']}\n"
+        yield f"Session {path} id={item['session_id']} format={item.get('format', 'pi')}\n"
         if item.get("parent_session"):
             yield f"parent_session={item['parent_session']}; copied history is not independent corroboration\n"
-        result_refs, originals = {}, set()
+        result_refs, originals, names = {}, set(), {}
+        head = {"format": item.get("format", "pi")}
         # Retain compact references only, never tool bodies. Do not inspect future appends.
-        for _, _, entry in lines(path, 0, item["to_offset"]):
+        for entry in entries(path, head, 0, item["to_offset"], names):
             message = entry_message(entry)
             if entry["type"] == "message":
                 originals.add(sha(encoded(message).encode("utf-8")))
             if message.get("role") == "toolResult":
                 result_refs.setdefault(message.get("toolCallId"), []).append((entry.get("id"), status(message)))
-        for _, _, entry in lines(path, item["from_offset"], item["to_offset"]):
+        for entry in entries(path, head, item["from_offset"], item["to_offset"], names):
             if entry["type"] == "session":
                 continue
             yield from render_entry(entry, result_refs)
@@ -441,7 +541,7 @@ def overview(args):
     text = "".join(overview_text(batch))
     # Text offsets from the earlier verbose rendering must not silently skip
     # content after this display-format change. Batch/state formats are unchanged.
-    identity = sha(("overview-v2\n" + encoded(batch)).encode("utf-8"))
+    identity = sha(("overview-v3\n" + encoded(batch)).encode("utf-8"))
     offset = 0
     if args.cursor:
         parts = args.cursor.split(":")
@@ -459,7 +559,7 @@ def detail(args):
     path = canonical(args.session)
     head, _ = header(path, workspace)
     found = None
-    for entry in detail_entries(path):
+    for entry in detail_entries(path, head):
         if entry.get("id") == args.entry and entry["type"] != "session":
             if found is not None:
                 fail(path, f"ambiguous entry {args.entry}")
@@ -494,7 +594,7 @@ def detail(args):
         if call_id is None:
             fail(path, f"entry {args.entry}: require an unambiguous call-id or call-index")
         matches = []
-        for entry in detail_entries(path):
+        for entry in detail_entries(path, head):
             if args.field == "arguments":
                 matches.extend((entry["id"], encoded(call.get("arguments", {})))
                                for call in calls(entry) if call.get("id") == call_id)

@@ -283,7 +283,7 @@ class TranscriptTests(unittest.TestCase):
         result = self.cli('snapshot', '--workspace', self.workspace, '--session-dir', missing,
                           '--output', self.batch)
         self.assertEqual(result['file_count'], 0)
-        self.assertTrue(result['coverage']['directory_missing'])
+        self.assertEqual(result['coverage']['missing_dirs'], [str(missing)])
         self.assertIn(str(missing), self.cli('overview', '--batch', self.batch)['text'])
         self.assertFalse(missing.exists())
         # Colon and backslash are legal POSIX cwd characters; Pi encodes both.
@@ -298,7 +298,7 @@ class TranscriptTests(unittest.TestCase):
             output = weird / '.memory/short_term/default.json'
             default = self.cli('snapshot', '--workspace', weird, '--output', output)
             self.assertEqual(default['file_count'], 1)
-            self.assertEqual(default['coverage']['session_dir'], str(directory))
+            self.assertEqual(default['coverage']['session_dirs'][0], str(directory))
             target.write_text(json.dumps({'type': 'session', 'version': 3, 'id': 'encoded', 'cwd': str(self.workspace)}) + '\n')
             self.reject('snapshot', '--workspace', weird, '--output', output.with_name('wrong.json'), source=target)
         self.reject('detail', '--workspace', self.root, '--session', self.source,
@@ -722,7 +722,7 @@ class TranscriptTests(unittest.TestCase):
         with patch.dict(os.environ, {'HOME': str(home)}):
             result = self.cli('snapshot', '--workspace', self.workspace, '--output', self.batch)
         self.assertEqual(result['file_count'], 1)
-        self.assertEqual(result['coverage']['session_dir'], str(self.sessions.resolve()))
+        self.assertEqual(result['coverage']['session_dirs'][0], str(self.sessions.resolve()))
 
     def test_final_overview_slice_uses_smaller_terminal_metadata_budget(self):
         self.snapshot()
@@ -734,3 +734,96 @@ class TranscriptTests(unittest.TestCase):
         self.assertEqual(page['text'], full[-1:])
         self.assertTrue(page['complete'])
         self.assertLessEqual(len(json.dumps(page, ensure_ascii=False)) + 1, 65)
+
+
+class ClaudeTranscriptTests(unittest.TestCase):
+    """Claude Code sessions: no header line, uuid entry IDs, tool results in user entries."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.workspace = self.root / "my_repo.v2"
+        self.short = self.workspace / ".memory" / "short_term"
+        self.short.mkdir(parents=True)
+        self.home = self.root / "home"
+        encoded = "".join(c if c.isalnum() else "-" for c in str(self.workspace.resolve()))
+        self.sessions = self.home / ".claude/projects" / encoded
+        self.sessions.mkdir(parents=True)
+        self.source = self.sessions / "abc-123.jsonl"
+        self.batch = self.short / "batch.json"
+        self.append({"type": "mode", "mode": "normal", "sessionId": "abc-123"})
+        self.entry("u1", None, "user", "Could source A support this join?")
+        self.entry("a1", "u1", "assistant", [{"type": "thinking", "thinking": "HIDDEN_THOUGHT"},
+                                            {"type": "text", "text": "I will inspect its grain."}])
+        self.entry("a2", "a1", "assistant", [{"type": "tool_use", "id": "toolu_1", "name": "Bash",
+                                             "input": {"command": "inspect-source-A"}}])
+        self.entry("r1", "a2", "user", [{"type": "tool_result", "tool_use_id": "toolu_1", "is_error": True,
+                                        "content": "Query failed: unknown column.\n" + "PRIVATE_ROW\n" * 50}])
+        self.entry("m1", "r1", "user", "SKILL_BODY", isMeta=True)
+        self.entry("c1", "m1", "user", "Summary: join failed on grain.", isCompactSummary=True)
+        self.append({"type": "attachment", "uuid": "att", "parentUuid": "c1", "attachment": {"x": "ATTACHED"}})
+        self.append({"type": "ai-title", "aiTitle": "TITLE_NOISE", "sessionId": "abc-123"})
+
+    def append(self, entry):
+        with self.source.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(entry) + "\n")
+
+    def entry(self, uid, parent, kind, content, **fields):
+        self.append({"type": kind, "uuid": uid, "parentUuid": parent, "sessionId": "abc-123",
+                     "cwd": str(self.workspace), "timestamp": "2026-09-24T08:00:00Z",
+                     "message": {"role": kind, "content": content}, **fields})
+
+    def cli(self, *args, ok=True):
+        import os
+        env = dict(os.environ, HOME=str(self.home))
+        result = subprocess.run([sys.executable, str(SCRIPT), *map(str, args)],
+                                capture_output=True, text=True, env=env)
+        self.assertEqual(result.returncode == 0, ok, result.stderr)
+        return json.loads(result.stdout) if ok else result.stderr
+
+    def test_default_discovery_overview_and_detail(self):
+        result = self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
+        self.assertEqual(result["file_count"], 1)
+        self.assertIn(str(self.sessions), result["coverage"]["session_dirs"])
+        text = self.cli("overview", "--batch", self.batch)["text"]
+        self.assertIn("format=claude", text)
+        self.assertIn("entry=u1 parent=None] user: Could source A", text)
+        self.assertIn("I will inspect its grain.", text)
+        self.assertIn("tool Bash call=toolu_1 result=r1 error", text)
+        self.assertIn("secondary compactionSummary", text)
+        self.assertIn("join failed on grain", text)
+        self.assertIn("omitted metadata type=meta", text)
+        self.assertIn("omitted metadata type=attachment", text)
+        for hidden in ("PRIVATE_ROW", "HIDDEN_THOUGHT", "SKILL_BODY", "ATTACHED", "TITLE_NOISE"):
+            self.assertNotIn(hidden, text)
+        detail = lambda *args: self.cli("detail", "--workspace", self.workspace, "--session", self.source,
+                                        "--entry", *args)
+        self.assertIn("inspect-source-A", detail("r1", "--field", "arguments")["text"])
+        self.assertIn("unknown column", detail("a2", "--field", "result")["text"])
+        self.assertEqual(detail("u1", "--field", "text")["text"], "Could source A support this join?")
+
+    def test_checkpoint_and_incremental_update(self):
+        self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
+        notes = self.short / "notes.md"
+        notes.write_text(json.loads(self.batch.read_text())["batch_id"])
+        self.cli("checkpoint", "--batch", self.batch, "--notes", notes)
+        self.entry("u2", "c1", "user", [{"type": "text", "text": "Try source B."},
+                                        {"type": "tool_result", "tool_use_id": "toolu_1", "content": "late"}])
+        second = self.short / "second.json"
+        result = self.cli("snapshot", "--workspace", self.workspace, "--output", second)
+        self.assertEqual(result["new_entry_count"], 1)
+        text = self.cli("overview", "--batch", second)["text"]
+        self.assertNotIn("Could source A", text)
+        self.assertIn("entry=u2/0 parent=c1] user: Try source B.", text)
+        self.assertIn("tool Bash call=toolu_1 result=u2/1 completed", text)
+
+    def test_wrong_cwd_and_malformed_tool_use_are_rejected(self):
+        self.entry("bad", "c1", "assistant", [{"type": "tool_use", "id": "x", "name": "Bash"}])
+        error = self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch, ok=False)
+        self.assertIn("invalid tool_use block", error)
+        self.assertFalse(self.batch.exists())
+        other = self.root / "other"
+        (other / ".memory/short_term").mkdir(parents=True)
+        self.cli("detail", "--workspace", other, "--session", self.source, "--entry", "u1",
+                 "--field", "text", ok=False)
