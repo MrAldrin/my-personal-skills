@@ -486,8 +486,10 @@ def status(message):
     return "unknown"
 
 
-def render_entry(entry, result_refs):
-    prefix = f"[{entry.get('timestamp')} entry={entry.get('id')} parent={entry.get('parentId')}] "
+def render_entry(entry, result_refs, previous_id=None, compact=lambda value: value):
+    parent = entry.get('parentId')
+    parent_ref = f" parent={compact(parent)}" if parent and parent != previous_id else ""
+    prefix = f"[{entry.get('timestamp')} entry={compact(entry.get('id'))}{parent_ref}] "
     message = entry_message(entry)
     role = message.get("role")
     if role in ("user", "assistant"):
@@ -496,18 +498,18 @@ def render_entry(entry, result_refs):
             # Opaque provider IDs can be hundreds of characters. Keep them for
             # joins, but expose a usable entry/index reference instead.
             ref = (f"call={call['id']}" if len(call['id']) <= 80 else
-                   f"entry={entry.get('id')} call-index={index}")
+                   f"entry={compact(entry.get('id'))} call-index={index}")
             refs = result_refs.get(call.get("id"), [])
             if refs:
                 for result_id, outcome in refs:
-                    yield f"tool {call.get('name')} {ref} result={result_id} {outcome}\n"
+                    yield f"tool {call.get('name')} {ref} result={compact(result_id)} {outcome}\n"
             else:
                 outcome = "cancelled" if message.get("stopReason") == "aborted" else "unknown"
                 yield f"tool {call.get('name')} {ref} result=none {outcome}\n"
     elif role == "toolResult":
         call_id = message.get("toolCallId")
         ref = f"call={call_id} " if isinstance(call_id, str) and len(call_id) <= 80 else ""
-        yield prefix + f"tool {message.get('toolName')} {ref}result={entry.get('id')} {status(message)}; body omitted\n"
+        yield prefix + f"tool {message.get('toolName')} {ref}result={compact(entry.get('id'))} {status(message)}; body omitted\n"
     elif role == "bashExecution":
         yield prefix + f"bashExecution {status(message)}; command/output omitted\n"
     elif entry["type"] in ("compaction", "branch_summary") or role in ("compactionSummary", "branchSummary"):
@@ -527,19 +529,42 @@ def overview_text(batch):
         yield f"Session {path} id={item['session_id']} format={item.get('format', 'pi')}\n"
         if item.get("parent_session"):
             yield f"parent_session={item['parent_session']}; copied history is not independent corroboration\n"
-        result_refs, originals, names = {}, set(), {}
+        result_refs, originals, names, ids = {}, set(), {}, set()
         head = {"format": item.get("format", "pi")}
         # Retain compact references only, never tool bodies. Do not inspect future appends.
         for entry in entries(path, head, 0, item["to_offset"], names):
+            if isinstance(entry.get("id"), str):
+                ids.add(entry["id"])
             message = entry_message(entry)
             if entry["type"] == "message":
                 originals.add(sha(encoded(message).encode("utf-8")))
             if message.get("role") == "toolResult":
                 result_refs.setdefault(message.get("toolCallId"), []).append((entry.get("id"), status(message)))
+        def compact(value):
+            if not isinstance(value, str) or len(value) < 24:
+                return value
+            size = 8
+            while any(other != value and other.startswith(value[:size]) for other in ids):
+                size += 1
+            return value[:size]
+
+        previous_id = None
+        assistant_run = False
         for entry in entries(path, head, item["from_offset"], item["to_offset"], names):
             if entry["type"] == "session":
                 continue
-            yield from render_entry(entry, result_refs)
+            message = entry_message(entry)
+            # Claude streams a single reply across adjacent assistant records.
+            # Keep each entry reference visible while eliding repeated timestamps.
+            merge = (head["format"] == "claude" and assistant_run
+                     and message.get("role") == "assistant" and not calls(entry)
+                     and bool(visible(message.get("content"))))
+            if merge:
+                yield f"  entry={compact(entry.get('id'))} assistant: {visible(message['content'])}\n"
+            else:
+                yield from render_entry(entry, result_refs, previous_id, compact)
+            assistant_run = (head["format"] == "claude" and message.get("role") == "assistant")
+            previous_id = entry.get("id")
             if entry["type"] == "compaction" and "retainedTail" in entry:
                 yield "retainedTail: secondary embedded context; exact original/repeated copies omitted\n"
                 for retained in retained_entries(entry):
@@ -547,7 +572,7 @@ def overview_text(batch):
                     if fingerprint not in originals:
                         originals.add(fingerprint)
                         yield "secondary retainedTail (not an independent observation): "
-                        yield from render_entry(retained, {})
+                        yield from render_entry(retained, {}, compact=compact)
 
 
 def bounded(text, offset, budget, make_result, source):
@@ -579,7 +604,7 @@ def overview(args):
     text = "".join(overview_text(batch))
     # Text offsets from the earlier verbose rendering must not silently skip
     # content after this display-format change. Batch/state formats are unchanged.
-    identity = sha(("overview-v3\n" + encoded(batch)).encode("utf-8"))
+    identity = sha(("overview-v4\n" + encoded(batch)).encode("utf-8"))
     offset = 0
     if args.cursor:
         parts = args.cursor.split(":")
@@ -598,12 +623,13 @@ def detail(args):
     head, _ = header(path, workspace)
     found = None
     for entry in detail_entries(path, head):
-        if entry.get("id") == args.entry and entry["type"] != "session":
+        if isinstance(entry.get("id"), str) and entry["id"].startswith(args.entry) and entry["type"] != "session":
             if found is not None:
                 fail(path, f"ambiguous entry {args.entry}")
             found = entry
     if found is None:
         fail(path, f"entry {args.entry} not found")
+    full_entry_id = found["id"]
     message = entry_message(found)
     role = message.get("role")
     own_calls = calls(found)
@@ -617,7 +643,7 @@ def detail(args):
     if args.call_id and not (args.call_id == message.get("toolCallId") or
                              any(call.get("id") == args.call_id for call in own_calls)):
         fail(path, f"entry {args.entry}: call-id is not associated with requested entry")
-    source = {"session": str(path), "session_id": head["id"], "entry": args.entry,
+    source = {"session": str(path), "session_id": head["id"], "entry": full_entry_id,
               "field": args.field, "call_id": call_id}
     if args.field == "text":
         if found["type"] in ("compaction", "branch_summary"):
@@ -641,7 +667,7 @@ def detail(args):
                 if result.get("role") == "toolResult" and result.get("toolCallId") == call_id:
                     matches.append((entry["id"], visible(result.get("content"))))
         # Prefer the requested context over copied compaction history.
-        context = args.entry.rpartition("/retainedTail/")[0]
+        context = full_entry_id.rpartition("/retainedTail/")[0]
         scoped = [match for match in matches if match[0].rpartition("/retainedTail/")[0] == context]
         if scoped:
             matches = scoped

@@ -803,7 +803,7 @@ class ClaudeTranscriptTests(unittest.TestCase):
         self.assertIn(str(self.sessions), result["coverage"]["session_dirs"])
         text = self.cli("overview", "--batch", self.batch)["text"]
         self.assertIn("format=claude", text)
-        self.assertIn("entry=u1 parent=None] user: Could source A", text)
+        self.assertIn("entry=u1] user: Could source A", text)
         self.assertIn("I will inspect its grain.", text)
         self.assertIn("tool Bash call=toolu_1 result=r1 error", text)
         self.assertIn("secondary compactionSummary", text)
@@ -817,6 +817,23 @@ class ClaudeTranscriptTests(unittest.TestCase):
         self.assertIn("inspect-source-A", detail("r1", "--field", "arguments")["text"])
         self.assertIn("unknown column", detail("a2", "--field", "result")["text"])
         self.assertEqual(detail("u1", "--field", "text")["text"], "Could source A support this join?")
+
+    def test_compact_ids_and_adjacent_assistant_entries_remain_addressable(self):
+        first = "12345678-aaaaaaaa-aaaa-aaaa-aaaaaaaaaaaa"
+        second = "12345678-bbbbbbbb-bbbb-bbbb-bbbbbbbbbbbb"
+        self.entry(first, "c1", "assistant", "First finding.")
+        self.entry(second, first, "assistant", "Second finding.")
+        self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
+        text = self.cli("overview", "--batch", self.batch)["text"]
+        self.assertIn("entry=12345678-a parent=c1] assistant: First finding.", text)
+        self.assertIn("entry=12345678-b assistant: Second finding.", text)
+        self.assertNotIn(first, text)
+        detail = self.cli("detail", "--workspace", self.workspace, "--session", self.source,
+                          "--entry", "12345678-b", "--field", "text")
+        self.assertEqual(detail["source"]["entry"], second)
+        self.assertEqual(detail["text"], "Second finding.")
+        self.cli("detail", "--workspace", self.workspace, "--session", self.source,
+                 "--entry", "12345678", "--field", "text", ok=False)
 
     def test_checkpoint_and_incremental_update(self):
         self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch)
