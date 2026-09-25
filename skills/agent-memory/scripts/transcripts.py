@@ -177,6 +177,8 @@ def claude_entries(entry, names, source):
     if entry["type"] not in ("user", "assistant") or not isinstance(message, dict):
         # Bookkeeping lines without a uuid (mode, titles, snapshots) are not conversation.
         return [dict(base, type=entry["type"])] if uid else []
+    if not isinstance(uid, str) or not uid:
+        fail(source, "Claude conversation entry requires a uuid")
     validate_claude(message, source)
     if entry.get("isMeta"):
         return [dict(base, type="meta")]

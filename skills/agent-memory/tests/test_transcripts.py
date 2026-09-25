@@ -850,6 +850,13 @@ class ClaudeTranscriptTests(unittest.TestCase):
         self.assertIn("entry=u2/0 parent=c1] user: Try source B.", text)
         self.assertIn("tool Bash call=toolu_1 result=u2/1 completed", text)
 
+    def test_conversation_without_uuid_is_rejected_before_snapshot(self):
+        self.append({"type": "user", "sessionId": "abc-123", "cwd": str(self.workspace),
+                     "message": {"role": "user", "content": "No entry ID"}})
+        error = self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch, ok=False)
+        self.assertIn("Claude conversation entry requires a uuid", error)
+        self.assertFalse(self.batch.exists())
+
     def test_wrong_cwd_and_malformed_tool_use_are_rejected(self):
         self.entry("bad", "c1", "assistant", [{"type": "tool_use", "id": "x", "name": "Bash"}])
         error = self.cli("snapshot", "--workspace", self.workspace, "--output", self.batch, ok=False)
