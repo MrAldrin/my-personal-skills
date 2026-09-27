@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -7,6 +8,20 @@ import tempfile
 import unittest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "transcripts.py"
+
+
+def home_vars(home):
+    return {'HOME': str(home), 'USERPROFILE': str(home)}
+
+
+def symlink_or_skip(test, link, target, *, target_is_directory=False):
+    try:
+        link.symlink_to(target, target_is_directory=target_is_directory)
+    except OSError as error:
+        if getattr(error, 'winerror', None) == 1314:
+            test.skipTest('Windows symlinks require Developer Mode or elevated privileges')
+        raise
+
 
 class TranscriptTests(unittest.TestCase):
     def setUp(self):
@@ -284,17 +299,17 @@ class TranscriptTests(unittest.TestCase):
                           '--output', self.batch)
         self.assertEqual(result['file_count'], 0)
         self.assertEqual(result['coverage']['missing_dirs'], [str(missing)])
-        self.assertIn(str(missing), self.cli('overview', '--batch', self.batch)['text'])
+        self.assertIn(json.dumps(str(missing))[1:-1], self.cli('overview', '--batch', self.batch)['text'])
         self.assertFalse(missing.exists())
-        # Colon and backslash are legal POSIX cwd characters; Pi encodes both.
-        weird = self.root / 'repo:with\\slash'
+        # POSIX permits these characters in a filename; Windows still encodes its drive colon.
+        weird = self.root / ('repo.with.dot' if os.name == 'nt' else 'repo:with\\slash')
         (weird / '.memory/short_term').mkdir(parents=True)
         safe = '--' + str(weird.resolve()).lstrip('/').replace('/', '-').replace('\\', '-').replace(':', '-') + '--'
         directory = self.root / 'home/.pi/agent/sessions' / safe
         directory.mkdir(parents=True)
         target = directory / 'encoded.jsonl'
         target.write_text(json.dumps({'type': 'session', 'version': 3, 'id': 'encoded', 'cwd': str(weird)}) + '\n')
-        with patch.dict(os.environ, {'HOME': str(self.root / 'home')}):
+        with patch.dict(os.environ, home_vars(self.root / 'home')):
             output = weird / '.memory/short_term/default.json'
             default = self.cli('snapshot', '--workspace', weird, '--output', output)
             self.assertEqual(default['file_count'], 1)
@@ -320,6 +335,35 @@ class TranscriptTests(unittest.TestCase):
                     '--entry', 'u1', '--field', 'text', '--max-chars', 1, source=self.source)
         self.reject('detail', '--workspace', self.workspace, '--session', self.source,
                     '--entry', 'u1', '--field', 'text', '--offset', -1, source=self.source)
+
+    def test_cli_preserves_unicode_with_ascii_stdout(self):
+        self.message('unicode', 't1', 'user', '雪🙂 café')
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), 'detail', '--workspace', str(self.workspace),
+             '--session', str(self.source), '--entry', 'unicode', '--field', 'text'],
+            capture_output=True, env=dict(os.environ, PYTHONIOENCODING='ascii'))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout.decode('ascii'))['text'], '雪🙂 café')
+
+    def test_unicode_pages_respect_serialized_output_budget(self):
+        text = '雪🙂' * 240
+        self.message('unicode', 't1', 'user', text)
+        combined, offset = '', 0
+        while True:
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), 'detail', '--workspace', str(self.workspace),
+                 '--session', str(self.source), '--entry', 'unicode', '--field', 'text',
+                 '--max-chars', '400', '--offset', str(offset)],
+                capture_output=True, env=dict(os.environ, PYTHONIOENCODING='ascii'))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertLessEqual(len(result.stdout), 400)
+            page = json.loads(result.stdout.decode('ascii'))
+            combined += page['text']
+            if page['next_offset'] is None:
+                break
+            self.assertGreater(page['next_offset'], offset)
+            offset = page['next_offset']
+        self.assertEqual(combined, text)
 
     def test_detail_continuation_preserves_escaped_unicode(self):
         text = '"\\\n雪🙂' * 600
@@ -485,8 +529,7 @@ class TranscriptTests(unittest.TestCase):
         empty = self.short / 'empty.md'; empty.write_text(' \n')
         wrong = self.short / 'wrong.md'; wrong.write_text('Batch: other-id')
         outside = self.root / 'outside.md'; outside.write_text(self.batch.read_text())
-        linked = self.short / 'linked.md'; linked.symlink_to(outside)
-        for note in (missing, empty, wrong, outside, linked):
+        for note in (missing, empty, wrong, outside):
             with self.subTest(note=note):
                 self.reject('checkpoint', '--batch', self.batch, '--notes', note)
                 self.assertEqual(self.state_path.read_bytes(), before)
@@ -494,6 +537,16 @@ class TranscriptTests(unittest.TestCase):
         good_bytes = good.read_bytes()
         self.cli('checkpoint', '--batch', self.batch, '--notes', good)
         self.assertEqual(good.read_bytes(), good_bytes)
+
+    def test_symlinked_notes_are_rejected_without_changing_state(self):
+        self.snapshot()
+        self.save_checkpoint()
+        outside = self.root / 'outside.md'; outside.write_text(self.batch.read_text())
+        linked = self.short / 'linked.md'
+        symlink_or_skip(self, linked, outside)
+        before = self.state_path.read_bytes()
+        self.reject('checkpoint', '--batch', self.batch, '--notes', linked)
+        self.assertEqual(self.state_path.read_bytes(), before)
 
     def test_partial_final_line_completes_after_checkpoint(self):
         pending = json.dumps({'type': 'message', 'id': 'pending', 'parentId': 't1',
@@ -624,7 +677,7 @@ class TranscriptTests(unittest.TestCase):
         self.save_checkpoint()
         external = self.root / 'external-state.json'
         self.state_path.rename(external)
-        self.state_path.symlink_to(external)
+        symlink_or_skip(self, self.state_path, external)
         before = external.read_bytes()
         self.reject('snapshot', '--workspace', self.workspace, '--session-dir', self.sessions,
                     '--output', self.short / 'linked-state-batch.json', source=self.state_path)
@@ -717,9 +770,9 @@ class TranscriptTests(unittest.TestCase):
         home = self.root / 'home'
         sessions = home / '.pi/agent/sessions'
         sessions.mkdir(parents=True)
-        safe = '--' + str(self.workspace).lstrip('/').replace('/', '-') + '--'
-        (sessions / safe).symlink_to(self.sessions, target_is_directory=True)
-        with patch.dict(os.environ, {'HOME': str(home)}):
+        safe = '--' + str(self.workspace).lstrip('/').replace('/', '-').replace('\\', '-').replace(':', '-') + '--'
+        symlink_or_skip(self, sessions / safe, self.sessions, target_is_directory=True)
+        with patch.dict(os.environ, home_vars(home)):
             result = self.cli('snapshot', '--workspace', self.workspace, '--output', self.batch)
         self.assertEqual(result['file_count'], 1)
         self.assertEqual(result['coverage']['session_dirs'][0], str(self.sessions.resolve()))
@@ -776,7 +829,7 @@ class ClaudeTranscriptTests(unittest.TestCase):
 
     def cli(self, *args, ok=True):
         import os
-        env = dict(os.environ, HOME=str(self.home))
+        env = dict(os.environ, **home_vars(self.home))
         result = subprocess.run([sys.executable, str(SCRIPT), *map(str, args)],
                                 capture_output=True, text=True, env=env)
         self.assertEqual(result.returncode == 0, ok, result.stderr)

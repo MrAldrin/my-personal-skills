@@ -33,6 +33,11 @@ def encoded(value):
     return json.dumps(value, ensure_ascii=False)
 
 
+def output_json(value):
+    # Keep CLI output printable even when Windows redirects stdout using cp1252.
+    return json.dumps(value)
+
+
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -584,14 +589,14 @@ def bounded(text, offset, budget, make_result, source):
     # an unfinished slice. Test it separately before binary-searching partials.
     if len(text) - offset <= budget:
         terminal = make_result(text[offset:], len(text))
-        if len(encoded(terminal)) + 1 <= budget:
+        if len(output_json(terminal)) + 1 <= budget:
             return terminal
     low, high = 0, min(len(text) - offset - 1, max(0, budget))
     best = None
     while low <= high:
         size = (low + high) // 2
         result = make_result(text[offset:offset + size], offset + size)
-        if len(encoded(result)) + 1 <= budget:
+        if len(output_json(result)) + 1 <= budget:
             best = (size, result)
             low = size + 1
         else:
@@ -773,7 +778,7 @@ def main():
     try:
         result = {"list": list_sessions, "snapshot": snapshot, "overview": overview, "detail": detail,
                   "checkpoint": checkpoint}[args.command](args)
-        print(encoded(result))
+        print(output_json(result))
     except (Invalid, OSError, KeyError, TypeError, ValueError) as error:
         source = getattr(args, "batch", None) or getattr(args, "session", None) or args.workspace
         print(f"{source}: {error}", file=sys.stderr)
