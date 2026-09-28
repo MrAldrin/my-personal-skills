@@ -30,7 +30,7 @@ Rules:
 - Precede the block with the label: `prompt:`
 - Wrap the message in a fenced `text` code block.
 - The prompt inside the code block must be **exactly one single physical line** (no embedded newline characters, only ASCII text/spaces).
-- Include the exact handoff file path.
+- Include the exact handoff file path. Apart from that path, keep the prompt task-neutral: do not name or paraphrase the chosen task, intended outcome, or specific constraints in it. Ask the receiving agent to derive those facts from the handoff; put your own task summary for the user outside the prompt block.
 - Instruct the receiving agent to read and delete the file, verify repository status, and review the current VCS/jj stack. Then lead with the specific next task, intended outcome, and key constraint or blocker in 2-3 sentences. If the task is unclear, ask the user. Wait for approval before starting the task; reading, deletion, and status review are permitted preparation.
 
 Example:
