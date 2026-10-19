@@ -7,6 +7,7 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `agent-memory` — project memory capture, lookup, and transcript review
 - `compact-decision-walkthrough` — review implementation plans one decision at a time
 - `creating-session-handoffs` — create concise handoffs between sessions
+- `project-structure` — shared README, AGENTS, backlog, scope, docs and memory structure for new and existing projects
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
 
 ## Install for Pi
