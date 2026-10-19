@@ -9,6 +9,7 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `creating-session-handoffs` — create concise handoffs between sessions
 - `project-structure` — shared README, AGENTS, backlog, scope, docs and memory structure for new and existing projects
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
+- `using-zellij-with-intercom` — launch visible interactive Pi peers in Zellij tabs and coordinate through intercom without requiring Herdr
 
 ## Install for Pi
 
