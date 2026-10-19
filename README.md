@@ -19,6 +19,8 @@ External skills to evaluate, not skills bundled with this repository. Listing on
 
 - [Grill Me — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me): stress-test a plan through questions that uncover assumptions and unresolved decisions. Try it on a real skill proposal, keeping questions one at a time and bounding the session. This is a trial candidate, not a definite addition.
 
+- [Domain Modeling / Ubiquitous Language — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/engineering/domain-modeling): clarify ambiguous project terminology and record shared definitions. Evaluate its benefits and documentation overhead in practice; this is a general skill recommendation to try, not a decision to adopt it.
+
 ## Install for Pi
 
 Clone this repository into a global Pi skill location:
