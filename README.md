@@ -11,6 +11,14 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
 - `using-zellij-with-intercom` — launch visible interactive Pi peers in Zellij tabs and coordinate through intercom without requiring Herdr
 
+## Possible skills
+
+External skills to evaluate, not skills bundled with this repository. Listing one here does not install it or commit us to adopting it. Whether to install per profile or manage external skills centrally through this repository remains undecided.
+
+### Worth trying
+
+- [Grill Me — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me): stress-test a plan through questions that uncover assumptions and unresolved decisions. Try it on a real skill proposal, keeping questions one at a time and bounding the session. This is a trial candidate, not a definite addition.
+
 ## Install for Pi
 
 Clone this repository into a global Pi skill location:
