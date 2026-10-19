@@ -36,7 +36,7 @@ Add the rest on first real need, never as placeholders:
 - `docs/scope.md`: at the first standing gate, boundary or permission. Until then, one scope line in the README is enough.
 - `docs/<topic>.md`: at the first maintained contract.
 - `docs/background/`: with the first evidence worth keeping.
-- `.memory/`: with the first lasting lesson.
+- `.memory/`: optional, when lasting lessons justify it. If adopted, follow the `agent-memory` skill's structure and maintenance rules.
 - `plans/<item>.md`: when an item outgrows a few backlog bullets.
 
 Do not create empty folders or empty companion files.
@@ -70,7 +70,7 @@ States: **Current focus** (selected; may be "nothing selected"), **Next** (ready
 
 - Each plan states `**Lifecycle:** temporary` or `**Lifecycle:** tracked` at creation. Unlabelled plans are not assumed temporary.
 - Before removing any plan, preserve decisions in owning docs, evidence in background and unfinished work in the backlog.
-- Remove finished temporary plans without asking once their outcomes are preserved. Retiring a tracked plan needs approval.
+- Remove finished temporary plans without asking once their outcomes are preserved and incoming links are updated. Retiring a tracked plan needs approval unless explicit project rules already authorize it; follow their completion and preservation conditions. Unlabelled plans follow the tracked-plan rule.
 - Plan cleanup never authorizes deleting code, data, reports or evidence.
 - Tool-generated plans (for example Superpowers) stay at the tool's default location. They are supporting plans, not a second queue. The backlog links to them when needed.
 
@@ -84,6 +84,6 @@ States: **Current focus** (selected; may be "nothing selected"), **Next** (ready
 
 1. Map existing files to the ownership table first. Note duplicates, second queues and stale files.
 2. Preserve the project's own rules, safeguards, checks and permissions.
-3. Propose the changes, including renames, merges and deletions, and get approval before applying them.
+3. Use the filenames and backlog states in this skill as the shared default. Propose renames or moves toward that default, including `docs/scope.md` when needed, and ask the owner before applying them. Do not silently rename existing files or replace project rules. Include merges and deletions in the proposal.
 4. Agree a safe point with any session actively working in the repo. Do not edit under it.
 5. Remove anything that only duplicates another owner. Keep project-specific content in that project.
