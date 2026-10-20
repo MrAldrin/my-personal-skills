@@ -13,6 +13,8 @@ description: >
 
 Honor the requested surface: a new visible Zellij tab means a persistent interactive Pi peer, not a headless subagent or reuse of an arbitrary session in the same directory. The user can switch tabs and continue that conversation directly.
 
+For independent task ownership, workspace naming, durable status, handoff, and cleanup, use `delegating-independent-work`; use this skill for Zellij launch and verification.
+
 ## Discover and launch
 
 1. Read the pi-intercom skill for messaging. For an explicitly requested Zellij peer, use this skill's launch procedure rather than intercom's Herdr-specific `openProjectPaneIfMissing` helper. The pi-intercom skill's Herdr manual-fallback warning does not make Herdr necessary for a user-authorized Zellij tab.
