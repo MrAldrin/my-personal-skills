@@ -1,6 +1,6 @@
 # Zellij / Pi command reference
 
-Run these through the agent's shell tool, not by typing into a focused terminal. Examples use Bash quoting; adapt to the actual shell. Replace example paths with discovered values, `review-peer` and the tab label with unique names, and `SUPERVISOR_SESSION_ID` with your own current intercom session ID from `list` or `status`. No helper script or Herdr installation is required.
+Run these through the agent's shell tool, not by typing into a focused terminal. Examples use Bash quoting; adapt to the actual shell. Replace example paths with discovered values, `review-peer` and the tab label with unique names, and `SUPERVISOR_SESSION_ID` with your own current intercom session ID from `list` or `status`. Replace `MODEL_WITH_REASONING` with the model/reasoning selected from the explicit request or applicable environment policy. No helper script or Herdr installation is required.
 
 ## Inspect
 
@@ -14,7 +14,7 @@ Use the existing Zellij session inherited by the agent. If explicitly targeting 
 
 ## Launch on Linux / WSL
 
-`zellij action new-tab --name "Review peer" --cwd /path/to/workspace --no-focus -- pi --model github-copilot/claude-haiku-5.5:medium --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report your session ID, cwd, PI_MODEL, PI_REASONING_LEVEL, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task and remain interactive."`
+`zellij action new-tab --name "Review peer" --cwd /path/to/workspace --no-focus -- pi --model 'MODEL_WITH_REASONING' --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report your session ID, cwd, PI_MODEL, PI_REASONING_LEVEL, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task and remain interactive."`
 
 This is the portable form; it requires `pi` to resolve to an executable in that environment. Do not copy Windows launcher paths into WSL. The live smoke test covered native Windows with Zellij 0.45.1, not Linux/WSL; verify local help and readiness on each machine.
 
@@ -22,7 +22,7 @@ This is the portable form; it requires `pi` to resolve to an executable in that 
 
 Run `zellij action list-panes --all --json` and inspect an existing Pi pane's `pane_command` / `terminal_command` to discover its actual launcher. This machine's verified route used Node with the existing fullscreen workaround, structurally:
 
-`zellij action new-tab --name "Review peer" --cwd 'C:/path/to/workspace' --no-focus -- node 'C:/path/to/dotfiles/pi/windows-fullscreen-mouse/launch.mjs' --model github-copilot/claude-haiku-5.5:medium --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report effective model, reasoning, cwd and session/pane identity. Do not edit or launch agents. Wait for the task and remain interactive."`
+`zellij action new-tab --name "Review peer" --cwd 'C:/path/to/workspace' --no-focus -- node 'C:/path/to/dotfiles/pi/windows-fullscreen-mouse/launch.mjs' --model 'MODEL_WITH_REASONING' --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report effective model, reasoning, cwd and session/pane identity. Do not edit or launch agents. Wait for the task and remain interactive."`
 
 The launcher is an optional local dependency, not supplied by this skill. Discover it; do not assume it exists at home. If absent, inspect the normal Pi installation and use a locally supported interactive entrypoint. Do not install or change terminal configuration merely to reproduce this example.
 

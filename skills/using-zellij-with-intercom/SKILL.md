@@ -27,7 +27,7 @@ For independent task ownership, workspace naming, durable status, handoff, and c
 ## Verify, then delegate
 
 - Record the returned tab ID and inspect its pane ID, command, cwd, and screen. A created tab is not proof of a ready agent.
-- Ask the peer to report its session ID, effective model/reasoning, cwd and Zellij session/pane variables through intercom, then wait. Start with `github-copilot/claude-haiku-5.5:medium` unless another model was requested; on failure retry with `github-copilot/gpt-6.1-sol:low`. Inspect failed startup before retrying; avoid duplicate peers.
+- Ask the peer to report its session ID, effective model/reasoning, cwd and Zellij session/pane variables through intercom, then wait. Select model/reasoning from the explicit request or applicable environment policy, and verify the effective selection. Inspect failed startup before retrying; avoid duplicate peers.
 - Refresh intercom `list`. Target the exact peer session, not cwd alone when multiple sessions share it. Intercom session IDs and Zellij tab/pane IDs are different namespaces. A missing Herdr location does not invalidate a Zellij peer.
 - Verify a two-way ping. Use `send` for nonblocking messages; reserve `ask` for a required answer and `reply` for an actual pending ask. Do not attach an ordinary send's ID as `replyTo`.
 - Send the task, constraints, isolation details, expected report, and permission boundaries for edits/subagent fanout. Leave the peer interactive afterward. Report its tab name and session identity so the user can take over.
