@@ -13,7 +13,7 @@ Keep small, bounded tasks with the parent and its subagents. Give large independ
 ## Agree ownership
 
 - Give each task one owner, a clear outcome, edit boundaries, permission for any child agents, and a completion target. Default to review-ready results; integration requires explicit user permission.
-- The parent owns ordinary subagents and their cleanup. Transfer independent task ownership from the launching parent to the verified peer in the record. That peer owns its task, workspace, children (including its own subagents), and cleanup, and continues if the launching chat closes.
+- The parent owns ordinary subagents and their cleanup. Transfer independent task ownership from the launching parent to the verified peer in the record. That peer owns its task, workspace, children (including its own subagents), and cleanup. Closing the launching chat does not transfer ownership back or cancel the task. Continued execution requires the peer process and its hosting session to remain alive; after interruption, verify liveness and recover from the durable record before resuming.
 - Record the task in the repository's existing backlog entry or linked task document. Honor its queue headings. Keep the durable record authoritative; messages to the launching chat are optional, as agreed ("take X independently" or "take X and report back here").
 
 ## Prepare the workspace and peer
