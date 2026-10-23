@@ -12,15 +12,16 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
 - `using-zellij-with-intercom` — launch visible interactive Pi peers in Zellij tabs and coordinate through intercom without requiring Herdr
 
-## Possible skills
+### Grilling and domain modeling
 
-External skills to evaluate, not skills bundled with this repository. Listing one here does not install it or commit us to adopting it. Whether to install per profile or manage external skills centrally through this repository remains undecided.
+Adapted from Matt Pocock's MIT-licensed skills, bundled as one set:
 
-### Worth trying
+- `grill-me` — stress-test one-off plans and non-code ideas without writing files by default
+- `grill-with-docs` — stress-test ongoing project designs while recording agreed terminology and significant decisions
+- `grilling` — shared design-tree interview discipline, one question at a time
+- `domain-modeling` — sharpen project language, maintain glossaries, and offer ADRs sparingly
 
-- [Grill Me — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me): stress-test a plan through questions that uncover assumptions and unresolved decisions. Try it on a real skill proposal, keeping questions one at a time and bounding the session. This is a trial candidate, not a definite addition.
-
-- [Domain Modeling / Ubiquitous Language — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/engineering/domain-modeling): clarify ambiguous project terminology and record shared definitions. Evaluate its benefits and documentation overhead in practice; this is a general skill recommendation to try, not a decision to adopt it.
+See [usage, dependencies, local adaptations and pinned provenance](docs/grilling-skills.md). These are repository-prepared skills, not a claim that installed copies have been updated. [Preparation/review status](docs/grilling-preparation.md).
 
 ## Install for Pi
 
@@ -42,10 +43,11 @@ After updating the clone or package, restart Pi or run `/reload`.
 
 ## Test
 
-The transcript helper's standard-library test suite can be run with:
+Run the skill-set packaging checks and transcript helper's standard-library suite:
 
 ```bash
-python3 -m unittest discover -s skills/agent-memory/tests -v
+uv run --no-project python -m unittest discover -s tests -v
+uv run --no-project python -m unittest discover -s skills/agent-memory/tests -v
 ```
 
 The `agent-memory` skill reads both Pi v3 and Claude Code session files and documents commands through `uv`.
