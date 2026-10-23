@@ -26,7 +26,9 @@
 - Current upstream uses `GLOSSARY.md`, not the older changelog article's `context.md`.
 - Current upstream grilling batches the whole decision frontier. This repository will default to one question at a time, preserving dependency ordering and recommendations.
 
-## Verification and handoff
+## Repository preparation verification and handoff
+
+The following records the preparation checkpoint before the later approved migration below.
 
 - Imported all four skill directories, both domain format references, and OpenAI metadata. Preserved upstream MIT license in `licenses/mattpocock-skills-MIT.txt`.
 - Updated README catalog/test commands and added `docs/grilling-skills.md` for usage, pinned provenance, local differences and future activation cautions. Existing Pi manifest already covers the set and remains unchanged.
@@ -37,4 +39,14 @@
 - Review dispositions: filled this formerly pending verification record; clarified that implementation waits for final confirmation while agreed glossary edits/approved ADRs can be inline. Static substring tests remain static, documented as such. Ownership metadata is retained here deliberately under this repository's independent-task policy.
 - Limitation: no installed-harness discovery, live interaction, home-machine test, or deployment has been performed. Current active standalone work `grill-me` is unchanged. Future activation needs duplicate-source inspection and explicit user approval.
 - Cleanup: no agent-owned workspace exists. Retain user-managed `default` and this record; completed child artifacts are retention-managed outside the repo. No bookmarks changed, remote push, or live configuration edits.
-- Next action: user reviews change `tvryxovm`, then discusses any integration and activation directly in this tab. Leave a clean working child above the completed change; keep this interactive session open.
+- Preparation next action: user reviews change `tvryxovm`, then discusses any integration and activation directly in this tab. A clean working child was left above the completed change.
+
+## Subsequent approved personal migration
+
+- User approved fixing the Windows collision, then retiring reachable legacy personal copies and documenting migration for home.
+- Removed the Windows dotfiles discovery symlink only. Its target is in JBF's shared `agent-skills` repository, with no local source-file edits; that shared source was deliberately preserved.
+- Removed the stale generated WSL mirror copy and synced only the four new skill directories into the existing personal mirror. Verified the four mirrored `SKILL.md` files match Windows. No unrelated skills were synced.
+- Added a README-linked cross-machine migration checklist in `docs/grilling-skills.md`. Repo updates alone do not delete conflicting skills elsewhere; no automatic deletion script was introduced.
+- Follow-up verification: all 6 packaging checks passed; `git diff --check` passed (line-ending warnings only). WSL `test-pi-skill-mirror.sh` passed under the normal Fish environment: “Pi skill mirror and fish launcher verified.” Direct Bash invocation lacked `uv` on PATH; rerunning through Fish resolved that environment issue.
+- Follow-up documentation change: `twlpslmx`. User-managed workspace retained. No children for this follow-up.
+- Remaining: reload/restart and confirm live discovery/behavior; inspect the home setup when there. Shared/team source deletion is outside this personal-installation cleanup. No push, bookmark movement or shared source edits.

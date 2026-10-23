@@ -21,7 +21,7 @@ Adapted from Matt Pocock's MIT-licensed skills, bundled as one set:
 - `grilling` — shared design-tree interview discipline, one question at a time
 - `domain-modeling` — sharpen project language, maintain glossaries, and offer ADRs sparingly
 
-See [usage, dependencies, local adaptations and pinned provenance](docs/grilling-skills.md). These are repository-prepared skills, not a claim that installed copies have been updated. [Preparation/review status](docs/grilling-preparation.md).
+See [usage, dependencies, local adaptations and pinned provenance](docs/grilling-skills.md). **Agents syncing this repo on another machine: follow the [sync and legacy-skill migration checklist](docs/grilling-skills.md#sync-and-migration-checklist-for-agents).** An update does not automatically retire old standalone `grill-me` installations from other skill sources. [Preparation/review status](docs/grilling-preparation.md).
 
 ## Install for Pi
 

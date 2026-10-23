@@ -19,7 +19,25 @@ Keep all four sibling directories together under `skills/`. `grill-me` loads `gr
 
 The existing `package.json` discovers `./skills` recursively for Pi; there is no per-skill catalog manifest to extend. The bundled `agents/openai.yaml` metadata is retained for harnesses that use it. Entry points retain upstream `disable-model-invocation: true` and OpenAI's explicit-invocation policy, but not every harness enforces those fields. Invoke the desired entry point explicitly. A skill-capable harness may invoke dependencies by name; a harness without a Skill tool must read the linked `SKILL.md` files in full. Relative links resolve from the containing skill directory, not the project cwd.
 
-This change prepares repository content only. It does **not** update any installed copy, live dotfiles, or home configuration. The older standalone `grill-me` in the work dotfiles remains untouched. Before future activation, inspect actual discovery paths on each machine, retire or disable the duplicate standalone copy with approval, and load the four-skill set from a single intended source. Then reload the harness and smoke-test explicit entry points. Do not assume pulling this development checkout deploys home or work installations.
+Repository updates do **not** automatically remove legacy skills from other discovery paths. Before activation, follow the migration checklist below. Do not assume pulling this development checkout deploys home or work installations.
+
+## Sync and migration checklist for agents
+
+When asked to sync these skills on another machine:
+
+1. Inspect the actual harness settings, package installations, skill directories and startup sync/mirror configuration. Preserve unrelated skills and user edits. Do not assume work-machine paths apply at home.
+2. Update the intended personal-skills installation to the user-approved revision containing **all four** sibling directories. Include the domain-modeling format references and skill metadata. Fetching alone does not update checked-out files; moving a checkout or pushing/integrating changes requires the user's applicable authorization.
+3. Search configured skill sources for another `grill-me`. The legacy standalone version directly says to interview the user, ask one question at a time, recommend answers and explore the codebase. The replacement entry point loads the sibling `grilling` skill. Compare content and resolve symlinks before removing anything; preserve any custom behavior not covered by the new set.
+4. With migration approval, retire the obsolete personal installation or discovery link so only the intended `grill-me` is loaded. Remove a link, not its source. **Do not delete a skill from a shared/team repository or modify a shared package merely to resolve a personal collision.** If a package also provides other needed skills, use the harness's supported filtering/configuration or ask how to resolve it.
+5. Refresh any generated mirror after fixing its source. A running session's `/reload` may reread the mirror without rebuilding it. Follow the machine's actual startup procedure; do not add a second sync mechanism.
+6. Reload/restart the harness, confirm all four intended skills are available without collisions, then smoke-test explicit `grill-me` and `grill-with-docs` invocation. Confirm one-question pacing and no writes for a read-only request. Record untested steps rather than calling discovery or behavior verified.
+
+### Work-machine migration (2026-10-23)
+
+- Windows Pi already loads this checkout's `skills/` directory. Removed only `C:/Users/A440AA6/dotfiles/pi/skills/grill-me`, a symlink into `projects/agent-skills/.claude/skills/grill-me`. The source belongs to JBF's shared `agent-skills` repository and was preserved. No personal custom edits were present in that source file.
+- Removed the old generated WSL copy at `/home/hsa/.local/share/pi-skills/dotfiles/grill-me` and mirrored just these four skills into `/home/hsa/.local/share/pi-skills/personal/`. All four mirrored `SKILL.md` files were compared with their Windows sources.
+- Normal WSL Fish `pi` startup runs `pi-sync-skills`, mirroring the Windows sources before launching Pi. The removed dotfiles link will therefore stay absent on subsequent syncs. Launching the underlying Pi binary directly bypasses that Fish hook.
+- Fresh-session discovery and live interview behavior have not been verified by the agent. Existing sessions need reload/restart. No home-machine installation, shared-repository deletion, remote push or bookmark movement was performed.
 
 ## Source and license
 
