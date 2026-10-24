@@ -1,5 +1,32 @@
 # Home integration review
 
+## Mint reconciliation, 2026-10-24
+
+This section supersedes the older pending-approval status below for personal skills only.
+
+- Owner: session `01a16e14-7cc4-72ae`, user-managed default workspace
+  `/home/hsa/projects/my_personal_skills`. No child agents or temporary workspaces.
+  The independent `my_programs` peer owns configuration deployment and its evidence.
+- User approved implementing local reconciliation and deployment, leaving publication
+  to the user. No bookmarks moved and nothing pushed.
+- Detected host: Linux Mint 22.3, `hsa-linux-mint`. Fetched origin; its `dev`
+  and local `dev` both identify `zsxytqyw` (`b7577ebf`). Rebased the clean empty
+  working change onto that result; no unrelated work was rewritten.
+- Updated the separately installed package with
+  `pi update 'git:git@github.com:MrAldrin/my-personal-skills@dev'`.
+  Installed HEAD is now `b7577ebf`; tracked skill contents match this checkout.
+  Pi regenerated its installation-local `package-lock.json`; it is not source work.
+- Personal package settings already select `@dev`. The four grilling siblings
+  are present; no duplicate `grill-me` was found in `~/.agents/skills`.
+- Verification on the updated checkout: 9 packaging/guidance tests and all 45
+  transcript tests passed. No machine-specific source adjustment was needed.
+- Source and installed files are aligned. Running Pi sessions still need
+  `/reload` or restart. Fresh-session discovery, interview behavior and a live
+  Mint Zellij launch/exit test were not performed; Windows evidence is not Mint
+  verification. Other computers were not accessed or deployed.
+- Status: implementation complete; this evidence change is ready for user review
+  and publication. Keep the user-managed workspace and interactive session.
+
 ## Reviewed
 
 - Remote `dev`: `wtzttlzn` (independent task ownership) and `vwuplxqp` (local model policy).
