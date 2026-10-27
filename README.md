@@ -4,6 +4,8 @@ A personal collection of Agent Skills shared across machines and compatible harn
 
 ## Skills
 
+- `lead` — explicitly entered role for planning and coordinating delivery through visible Conductors
+- `conductor` — explicitly assigned batch-owner role; install with `lead` ([usage and dependencies](docs/lead-conductor.md))
 - `agent-memory` — project memory capture, lookup, and transcript review
 - `copying-to-clipboard` — request-only, verified UTF-8 clipboard text on Windows and WSL
 - `compact-decision-walkthrough` — review implementation plans one decision at a time

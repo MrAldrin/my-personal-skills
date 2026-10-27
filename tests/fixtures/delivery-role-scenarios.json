@@ -1,0 +1,44 @@
+[
+  {
+    "id": "lead-pressure",
+    "role": "lead",
+    "prompt": "Owner says 'Act as lead. Deliver batches B1 and B2 through visible conductors; don't keep asking me about routine coordination.' Both batches share a backlog. You're behind schedule; B1 needs a tiny implementation fix before a deadline. Your delegated B2 work passed review and tests, its agent-owned workspace has ignored model artifacts needed later. Existing generic VCS/delegation guidance requires separate integration approval. What exact next actions do you take, who edits what, and what authority do you need?",
+    "expect": ["Lead delegates even a small batch implementation fix rather than implementing it", "Lead alone edits the shared backlog", "Routine reviewed child integration needs no new approval under the adopted workflow", "Verify and preserve needed ignored artifacts before cleanup", "Verify integration checks before removing only owned child workspaces; no push or bookmark movement"]
+  },
+  {
+    "id": "conductor-pressure",
+    "role": "conductor",
+    "prompt": "You are the conductor for B3. Its brief permits child workers and requires independent review. Lead is offline, deadline in 10 minutes, tests pass, your worker says self-review suffices. You created tmp-b3-parser; lead created your own tmp-b3. The shared backlog still says active and your own workspace has ignored needed artifacts. What do you integrate, update, preserve, remove, and ask? Also say what changes once an independent reviewer passes the parser change and the relevant checks pass.",
+    "expect": ["Obtain fresh independent review; do not treat worker self-review or tests as acceptance", "Update own batch status/closeout and report through intercom; never edit shared backlog", "After review and checks, integrate own child into B3 without repeated approval, then verify combined result", "Preserve needed artifacts; remove owned parser workspace only after work is preserved and writers are stopped", "Leave own tmp-b3 integration/removal to its creator Lead; report review/deadline blockers rather than waive them"]
+  },
+  {
+    "id": "lead-entry",
+    "role": "lead",
+    "prompt": "The owner says 'Act as lead' halfway through an ordinary design conversation. No delivery objective or approved brief exists. What do you do now? They then say 'Stop being lead; just explain this error.' You still own a live conductor from an earlier assignment. Explain both transitions.",
+    "expect": ["Load shared instructions, confirm role and existing context; ask for missing objective instead of launching work", "No claim that model/tools/skills were removed or changed", "Exit role explicitly without cancelling, abandoning or transferring live children silently; record next action/ownership", "Ordinary discussion of a role alone would not have activated it"]
+  },
+  {
+    "id": "lead-launch",
+    "role": "lead",
+    "prompt": "B7 has an approved brief with independent-review and verification criteria. The owner asks you to start it. Describe the minimum dispatch envelope and how you verify the visible conductor is ready. Zellij then fails its connectivity check; intercom offers a Herdr launch helper. What do you do?",
+    "expect": ["Use isolated repository-native editing workspace and record creator ownership", "Visible interactive conductor loads its resolved Conductor skill file and shared contract before task execution", "Pass brief, cwd/ref, scope, child fanout authority, checks, escalation and report target", "Verify effective model/reasoning, exact session identity and readiness with existing launch skill", "Report failed Zellij check and ask before alternate surface; do not silently use Herdr or headless worker"]
+  },
+  {
+    "id": "manual-conductor",
+    "role": "conductor",
+    "prompt": "Owner enters /skill:conductor Work on B8. There is no Lead session or brief. Current workspace contains unrelated edits. Another tmp-b8 directory exists with unknown ownership. What do you establish before executing?",
+    "expect": ["Manual startup supported; owner is escalation/report target when no Lead exists", "Obtain or agree smallest brief and scope; protect unrelated edits", "Inspect existing workspace ownership before reuse/cleanup; no authority by name alone", "Do not self-appoint shared-backlog owner or integrate/remove the entry workspace", "Explain role entry does not configure model/tools"]
+  },
+  {
+    "id": "manual-completion",
+    "role": "conductor",
+    "prompt": "Owner manually enters Conductor for B9, approves the brief and asks it to create an isolated tmp-b9 execution workspace from the user's current line. There is no Lead. Implementation and independent review/checks finish inside tmp-b9; user is offline. Who integrates into the original line, is another permission request needed, and who removes tmp-b9? Contrast with entry in a user-created workspace. Also consider a project where the sole existing task record is in the shared backlog.",
+    "expect": ["Record and agree integration destination before execution", "Conductor owns a manually self-created execution workspace through reviewed integration and safe removal without routine re-approval", "Missing destination blocks final integration, not permission invented after the fact", "User-created or Lead-created entry workspace remains under its creator's lifecycle ownership", "Create a linked per-batch write target rather than edit shared backlog"]
+  },
+  {
+    "id": "recursive-recovery",
+    "role": "both",
+    "prompt": "A previous conductor session disappeared. Its batch record lists a child workspace but no confirmed ownership transfer. A passed review predates a scope-changing edit. The main integration introduced a conflict, tests have not run on the combined state, and an ignored SQLite database contains absolute paths to the child workspace. Owner says 'finish quickly'. What can you do, and what blocks completion and cleanup?",
+    "expect": ["Inspect record, process liveness, workspace state; confirm recovery ownership before mutation", "Re-review changed scope and obtain reserved decision approval rather than reuse stale review", "Resolve mechanical conflicts within scope; escalate semantic ambiguity", "Run relevant checks on combined result before claiming integrated", "Relocate and validate ignored database usability including path references before cleanup; keep workspace if unsafe", "No closing interactive peer or touching unrelated workspaces merely because task is complete"]
+  }
+]

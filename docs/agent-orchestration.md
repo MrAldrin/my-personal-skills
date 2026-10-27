@@ -1,7 +1,7 @@
 # Agent orchestration: findings and open design
 
-**Lifecycle:** temporary working record. Started 2026-10-24.
-**Status:** discussion in progress. Nothing is built yet. No skill, role file, launcher or hook exists for this work.
+**Lifecycle:** historical research and design discussion. Started 2026-10-24.
+**Status:** superseded for current behavior by the [minimal Lead and Conductor skills](lead-conductor.md), implemented 2026-10-27. The findings and alternatives below preserve the earlier discussion; proposed launch profiles, hooks and model tiers are not current configuration.
 
 Goal: turn the lead / conductor / worker workflow first tried in `ANA_customer_scoring` into reusable personal tooling (skills, role files, a launcher, maybe hooks), and refine it over time.
 
