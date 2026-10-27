@@ -5,6 +5,7 @@ A personal collection of Agent Skills shared across machines and compatible harn
 ## Skills
 
 - `agent-memory` — project memory capture, lookup, and transcript review
+- `copying-to-clipboard` — request-only, verified UTF-8 clipboard text on Windows and WSL
 - `compact-decision-walkthrough` — review implementation plans one decision at a time
 - `creating-session-handoffs` — create concise handoffs between sessions
 - `delegating-independent-work` — experimental ownership, workspace, handoff and cleanup workflow for independent agents
