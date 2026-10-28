@@ -41,16 +41,28 @@ class GrillingSkillsTests(unittest.TestCase):
         for name in NAMES:
             for path in (SKILLS / name).glob("*.md"):
                 # Format references contain fictional project links in fenced examples.
-                prose = re.sub(r"```[^\n]*\n.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
+                prose = re.sub(
+                    r"```[^\n]*\n.*?```",
+                    "",
+                    path.read_text(encoding="utf-8"),
+                    flags=re.DOTALL,
+                )
                 for target in re.findall(r"\]\(([^)]+)\)", prose):
                     if "://" not in target and not target.startswith("#"):
-                        self.assertTrue((path.parent / target.split("#")[0]).is_file(), (path, target))
+                        self.assertTrue(
+                            (path.parent / target.split("#")[0]).is_file(),
+                            (path, target),
+                        )
 
     def test_grilling_local_behavior(self) -> None:
         content = self.skill("grilling")
         for phrase in (
-            "one question at a time", "recommended answer", "prerequisites",
-            "delegation is authorized", "look up", "user confirms",
+            "one question at a time",
+            "recommended answer",
+            "prerequisites",
+            "delegation is authorized",
+            "look up",
+            "user confirms",
         ):
             self.assertIn(phrase, content)
         self.assertNotIn("Ask the whole frontier", content)
@@ -59,14 +71,23 @@ class GrillingSkillsTests(unittest.TestCase):
 
     def test_domain_persistence_boundaries(self) -> None:
         content = self.skill("domain-modeling")
-        for phrase in ("GLOSSARY-MAP.md", "Create files lazily", "all three", "Hard to reverse",
-                       "Surprising without context", "real trade-off", "existing documentation conventions"):
+        for phrase in (
+            "GLOSSARY-MAP.md",
+            "Create files lazily",
+            "all three",
+            "Hard to reverse",
+            "Surprising without context",
+            "real trade-off",
+            "existing documentation conventions",
+        ):
             self.assertIn(phrase, content)
         self.assertTrue((SKILLS / "domain-modeling/GLOSSARY-FORMAT.md").is_file())
         self.assertTrue((SKILLS / "domain-modeling/ADR-FORMAT.md").is_file())
 
     def test_license_and_pinned_provenance(self) -> None:
-        license_text = (ROOT / "licenses/mattpocock-skills-MIT.txt").read_text(encoding="utf-8")
+        license_text = (ROOT / "licenses/mattpocock-skills-MIT.txt").read_text(
+            encoding="utf-8"
+        )
         self.assertIn("Copyright (c) 2026 Matt Pocock", license_text)
         self.assertIn("Permission is hereby granted", license_text)
         provenance = (ROOT / "docs/grilling-skills.md").read_text(encoding="utf-8")

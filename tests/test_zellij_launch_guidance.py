@@ -10,7 +10,9 @@ SKILL = Path(__file__).resolve().parents[1] / "skills/using-zellij-with-intercom
 class ZellijLaunchGuidanceTests(unittest.TestCase):
     def test_new_tab_examples_start_normal_shell(self) -> None:
         content = (SKILL / "commands.md").read_text(encoding="utf-8")
-        commands = re.findall(r"(?m)^`?(zellij action new-tab [^\n`]+)", content, re.M)
+        commands = re.findall(
+            r"(?m)^`?(zellij action new-tab [^\n`]+)", content, re.MULTILINE
+        )
         self.assertGreaterEqual(len(commands), 2)
         for command in commands:
             self.assertNotIn(" -- ", command)
@@ -29,7 +31,13 @@ class ZellijLaunchGuidanceTests(unittest.TestCase):
 
     def test_skill_requires_shell_and_exit_verification(self) -> None:
         content = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        for phrase in ("normal interactive", "shell prompt", "foreground", "stable", "disposable"):
+        for phrase in (
+            "normal interactive",
+            "shell prompt",
+            "foreground",
+            "stable",
+            "disposable",
+        ):
             self.assertIn(phrase, content)
         self.assertIn("Do not replace", content)
         self.assertIn("--close-on-exit", content)
