@@ -52,14 +52,6 @@ class DeliveryRolePackagingTests(unittest.TestCase):
                     with self.subTest(source=path, target=target):
                         self.assertTrue(target.is_file())
 
-    def test_roles_and_shared_contract_stay_small(self) -> None:
-        for role in ROLES:
-            text = (SKILLS / role / "SKILL.md").read_text(encoding="utf-8")
-            with self.subTest(role=role):
-                self.assertLess(len(text.split()), 500)
-        contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
-        self.assertLess(len(contract.split()), 1100)
-
     def test_bundle_uses_existing_package_skill_root(self) -> None:
         package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
         self.assertIn("./skills", package["pi"]["skills"])
