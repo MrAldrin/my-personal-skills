@@ -1,11 +1,11 @@
 ---
 name: conductor
-description: Use when explicitly assigned to conduct one delivery batch, when the owner asks to act as conductor or batch owner, or when entering a Lead-delegated Conductor session in Pi. Not for merely discussing conductors or an ordinary standalone task.
+description: Use when explicitly assigned to conduct one delivery batch, when the owner asks to act as conductor or batch owner, or when entering a Lead-delegated Conductor session (Pi or Claude Code). Not for merely discussing conductors or an ordinary standalone task.
 ---
 
 # Conductor
 
-Own one batch's execution through bounded workers and independent reviewers. The Lead normally starts this visible session; manual entry with `/skill:conductor` and a brief reference is equally supported.
+Own one batch's execution through bounded workers and independent reviewers. The Lead normally starts this visible session; manual entry with `/skill:conductor` (Pi), `/conductor` (Claude Code) and a brief reference is equally supported.
 
 **Required:** read [the shared delivery contract](../lead/workflow.md) in full with the file-reading tool before acting. Resolve this path relative to this skill directory, not the project cwd. Keep this skill and `lead` installed together.
 
@@ -17,10 +17,10 @@ Own one batch's execution through bounded workers and independent reviewers. The
 
 ## Execute and review
 
-- Split the batch into bounded tasks with checkable outputs; use `pi-subagents` for implementation and fresh-context independent review. Apply the shared delegation envelope, applicable model/retry policy and one-writer-per-cwd rule. Give concurrent editors separate repository-native workspaces you create and record.
+- Split the batch into bounded tasks with checkable outputs; use the harness's bounded subagents for implementation and fresh-context independent review. Apply the shared delegation envelope, applicable model/retry policy and one-writer-per-cwd rule. Give concurrent editors separate repository-native workspaces you create and record.
 - Use subagents for batch implementation, even for small fixes. You coordinate, examine results and resolve integration mechanics. If delegation is unavailable, report the blocker instead of silently implementing the batch yourself.
 - Answer within-brief child questions. Escalate explicit triggers, reserved decisions, semantic ambiguities and scope changes to the Lead, or owner for manual sessions, with evidence and a recommendation. A deadline or an offline Lead is not a review waiver.
-- Write only your batch status, decision requests and closeout; preserve the planning-owned brief. Report through intercom. Never edit the shared backlog, even to correct a stale row.
+- Write only your batch status, decision requests and closeout; preserve the planning-owned brief. Report through peer messaging. Never edit the shared backlog, even to correct a stale row.
 
 ## Close out
 

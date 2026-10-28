@@ -20,7 +20,7 @@ Use existing project records; use `project-structure` when structure needs estab
 | Batch brief | Planning/Lead; freeze at handoff, agree changes with Conductor |
 | Batch status, decision requests and closeout | Assigned Conductor only while executing |
 
-Conductors report through intercom; they never edit the shared backlog, even if stale or the Lead is offline. The Lead updates it at integration. Avoid simultaneous edits to different sections of one file: coordinate a write handoff when a brief must change.
+Conductors report through peer messaging; they never edit the shared backlog, even if stale or the Lead is offline. The Lead updates it at integration. Avoid simultaneous edits to different sections of one file: coordinate a write handoff when a brief must change.
 
 A batch record needs these slots (adapt headings to the project):
 
@@ -52,12 +52,23 @@ Example: the Lead creates `tmp-b3` as the Conductor's execution cwd. The Conduct
 5. Before removal, verify integrated work remains reachable, no active writer/child still needs the workspace, and needed ignored/untracked artifacts are relocated and usable. Validate path-dependent artifacts, not just file copies. Retain the workspace and report a blocker if preservation is unsafe.
 6. Briefly explain cleanup impact, then use repository-native removal only for confirmed agent-owned resources. Record disposition. Keep successful interactive peer conversations open; workspace removal is not permission to close a tab or kill its session. If the peer still needs that cwd, arrange its safe release first.
 
+## Harness mechanics
+
+Lead and Conductor in one delivery use the same harness. The contract is identical; only these mechanics differ:
+
+| Capability | Pi | Claude Code |
+| --- | --- | --- |
+| Role entry | `/skill:lead`, `/skill:conductor` | `/lead`, `/conductor` |
+| Bounded worker/reviewer | `pi-subagents` | `Agent` tool with explicit `model`/`effort`; never `isolation: "worktree"` (use jj workspaces as cwd) |
+| Visible Conductor | Pi in a Zellij tab | `claude` in a Zellij tab |
+| Peer messaging | `pi-intercom` | `ListAgents` and `SendMessage` |
+
 ## Reuse mechanics on demand
 
 Read the named skill when performing its operation; do not load every dependency upfront:
 
 - `delegating-independent-work`: isolation, naming, durable handoff and recovery; retain this contract's creator lifecycle ownership and standing integration authority.
-- `using-zellij-with-intercom` and `pi-intercom`: shell-first visible launch, exact session readiness and two-way communication. If unavailable, report the failed check and ask before choosing another surface.
-- `pi-subagents`: bounded worker/reviewer launch, supervisor escalation and fresh review. Follow applicable model/retry policy. Missing launch dependencies block the affected dispatch, not planning.
+- `using-zellij-with-intercom` (both harnesses) and, in Pi, `pi-intercom`: shell-first visible launch, exact session readiness and two-way communication. If unavailable, report the failed check and ask before choosing another surface.
+- `pi-subagents` (Pi) or the `Agent` tool (Claude Code): bounded worker/reviewer launch, supervisor escalation and fresh review. Follow applicable model/retry policy. Missing launch dependencies block the affected dispatch, not planning.
 - `version-control-workflow`: inspect state, atomic changes and safe jj mechanics, with this contract's scoped integration exception.
 - `project-structure`: existing backlog and document conventions; do not restructure a project merely to enter a role.

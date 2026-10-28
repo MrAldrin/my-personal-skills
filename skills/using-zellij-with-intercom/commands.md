@@ -1,4 +1,4 @@
-# Zellij / Pi command reference
+# Zellij / Pi / Claude Code command reference
 
 Run Zellij commands through the agent's shell tool. Two shells matter: the tool's shell parses the Zellij invocation; the new pane's interactive shell parses the submitted Pi command. Quote for each separately. Examples below use Bash for the tool and Bash-compatible or Nushell syntax in the pane, as labelled. Replace paths, tab/session names, `MODEL_WITH_REASONING` and `SUPERVISOR_SESSION_ID` with discovered or policy-selected values. No helper script or Herdr installation is required.
 
@@ -83,6 +83,23 @@ Use the intercom tool, not a shell command:
 3. After acknowledgement and selection verification, send the bounded task packet to the same verified peer.
 
 Do not enable `openProjectPaneIfMissing`: that launches through Herdr. Use exact session targeting even when peers share a cwd.
+
+## Claude Code peers
+
+Same shell-first tab and pane-targeted submission. Submit (Bash-compatible pane; adapt quoting for Fish or others):
+
+```bash
+zellij action write-chars --pane-id terminal_123 'claude --name review-peer --model MODEL --effort EFFORT "Read SKILL_PATH before acting. Send readiness with SendMessage to SUPERVISOR_NAME: report your session name, cwd, model, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task."'
+zellij action write --pane-id terminal_123 13
+```
+
+Check `claude --help` for `--name`, `--model` and `--effort`. Find the supervisor's own name with `ListAgents` before launch. Then:
+
+1. `ListAgents` to find the exact peer name.
+2. `SendMessage` a ping; wait for its reply (a message wakes an idle session).
+3. Send the task packet to the same peer.
+
+Same-machine only; Windows and WSL sessions cannot reach each other. Exiting Claude returns to the shell.
 
 ## Verify lifecycle with an authorized disposable tab
 

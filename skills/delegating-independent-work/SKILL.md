@@ -21,7 +21,7 @@ Keep small, bounded tasks with the parent and its subagents. Give large independ
 - Give concurrent editing agents separate repository-native workspaces, preferably jj. Read-only agents need no mandatory workspace.
 - Match an agent-managed workspace name and its folder basename: `tmp-<short-task-descriptor>`, without a random suffix. On collision, inspect the existing task and ownership before choosing whether to resume, coordinate, or use a distinct task descriptor.
 - Record ownership before handing over work. Treat the name as a visual cue; use the durable record as cleanup authority. Leave user-managed workspaces under user management.
-- Use `using-zellij-with-intercom` for a requested Zellij peer's launch and readiness verification, and `pi-intercom` for messaging. Hand over the task, workspace, authority, and durable record location. Keep successful interactive peers available to the user.
+- Use `using-zellij-with-intercom` for a requested Zellij peer's launch and readiness verification, and its harness's messaging (`pi-intercom` in Pi, `SendMessage` in Claude Code). Hand over the task, workspace, authority, and durable record location. Keep successful interactive peers available to the user.
 
 ## Keep a recoverable record
 

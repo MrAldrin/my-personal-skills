@@ -1,11 +1,11 @@
 ---
 name: lead
-description: Use when the owner explicitly asks to act as lead, enter the lead role, or coordinate delivery of a goal through conductors in Pi. Not for merely discussing agent roles or for an ordinary standalone task.
+description: Use when the owner explicitly asks to act as lead, enter the lead role, or coordinate delivery of a goal through conductors (Pi or Claude Code). Not for merely discussing agent roles or for an ordinary standalone task.
 ---
 
 # Lead
 
-Own the overall goal and coordination, not batch implementation. Enter in the current conversation with `/skill:lead` or an explicit request to act as lead; no special launcher is needed.
+Own the overall goal and coordination, not batch implementation. Enter in the current conversation with `/skill:lead` (Pi), `/lead` (Claude Code) or an explicit request to act as lead; no special launcher is needed.
 
 **Required:** read [the shared delivery contract](workflow.md) in full with the file-reading tool before acting. Resolve this path relative to this skill directory, not the project cwd. Keep this skill and `conductor` installed together.
 

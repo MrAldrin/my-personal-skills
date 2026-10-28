@@ -1,15 +1,15 @@
 ---
 name: using-zellij-with-intercom
 description: >
-  Use when the user wants another agent in a visible Zellij tab or pane,
+  Use when the user wants another Pi or Claude Code agent in a visible Zellij tab or pane,
   wants to keep talking directly to a delegated agent, or asks to use intercom
   instead of subagents in their terminal multiplexer. Also use when intercom's
   Herdr launcher fails but an existing Zellij session may be available.
 ---
 
-# Visible Pi peers in Zellij
+# Visible Pi and Claude Code peers in Zellij
 
-**Zellij** is the multiplexer. **WezTerm** may host its terminal. **Intercom** carries messages between Pi sessions. **Herdr** is a separate launcher integration, not a prerequisite for intercom.
+**Zellij** is the multiplexer. **WezTerm** may host its terminal. **Intercom** carries messages between Pi sessions; Claude Code sessions use built-in `ListAgents`/`SendMessage` instead. The procedure is the same for both; [commands.md](commands.md) holds the harness-specific launch and messaging lines. Launch peers of your own harness. **Herdr** is a separate launcher integration, not a prerequisite for intercom.
 
 Honor the requested surface: a new visible Zellij tab means a persistent interactive Pi peer, not a headless subagent or reuse of an arbitrary session in the same directory. The user can switch tabs and continue that conversation directly.
 
@@ -17,7 +17,7 @@ For independent task ownership, workspace naming, durable status, handoff, and c
 
 ## Discover and launch
 
-1. Read the pi-intercom skill for messaging. For an explicitly requested Zellij peer, use this skill's launch procedure rather than intercom's Herdr-specific `openProjectPaneIfMissing` helper. The pi-intercom skill's Herdr manual-fallback warning does not make Herdr necessary for a user-authorized Zellij tab.
+1. In Pi, read the pi-intercom skill for messaging; in Claude Code, load `ListAgents` and `SendMessage`. For an explicitly requested Zellij peer, use this skill's launch procedure rather than intercom's Herdr-specific `openProjectPaneIfMissing` helper. The pi-intercom skill's Herdr manual-fallback warning does not make Herdr necessary for a user-authorized Zellij tab.
 2. Inspect the environment, executable locations, Zellij version, and live session. Check `ZELLIJ_SESSION_NAME` and `ZELLIJ_PANE_ID`; confirm connectivity with Zellij's tab/pane listing commands. Environment variables alone do not prove connectivity.
 3. Read [commands.md](commands.md). Inspect installed command help before launching: flags vary by version. Do not switch to WezTerm tabs, create a nested multiplexer, or use another machine's paths as a fallback.
 4. Choose the intended working directory. For concurrent edits, establish repository-native isolation first; do not run version-control mutations concurrently in one working copy. An idle/read-only peer needs no new workspace.
