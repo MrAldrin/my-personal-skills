@@ -5,7 +5,7 @@ description: Use when setting up a new project's README, AGENTS.md and backlog, 
 
 # Project structure
 
-A shared mental model for projects. It gives the maintainer and agents one vocabulary for work, current facts, reader-facing briefings and evidence. It is not project-management machinery. Reuse the model, not any project's business content.
+A shared mental model for projects, reducing the effort of switching repositories. Use the same navigation, authoritative homes and work states across projects so the maintainer and agents know where to look. It is not project-management machinery. Reuse the model, not any project's business content.
 
 ## Ownership
 
@@ -20,8 +20,8 @@ One authoritative home per maintained fact. Short summaries and links are fine. 
 | `docs/scope.md` | Enduring boundaries, supported capabilities, standing gates and standing permissions. | Assignments, remaining actions or a dated progress log. |
 | `docs/<topic>.md` | How the project currently works: contracts, definitions, architecture. | Dated evidence. |
 | `docs/background/` | Evidence and reasoning behind current docs, linked from them. | Current rules. |
-| `docs/reports/` | Concise, visual briefings on important topics, findings and decisions needing the owner's attention. Markdown or HTML. | Detailed reference material or session diaries. |
-| `docs/index.md` | The documentation site's reader hub, highlighting current briefings and linking reference docs. | A second copy of their content. |
+| `docs/reports/` | Markdown-first owner briefings on important topics, findings and decisions, with meaningful visuals where useful. | Runtime application reports, detailed reference material or session diaries. |
+| `docs/index.md` | The reader hub, highlighting current briefings and linking reference docs, with or without a site. | A second copy of their content or a second work queue. |
 
 Tests:
 - AGENTS versus scope: scope owns gates and permissions. AGENTS owns routing and how agents work, and points to scope in one line instead of restating gates.
@@ -44,19 +44,29 @@ Add files and subfolders on first real need, never as placeholders:
 | `docs/reports/` | The first reader-facing briefing needs a home. |
 | `docs/reports/archive/` | A report is superseded or retained mainly as historical reference. Completion alone is not a reason to archive it. |
 | `docs/background/` | Supporting evidence or a detailed investigation is worth keeping. |
-| `docs/index.md` | A documentation site is adopted. |
+| `docs/index.md` | Reference docs or reports need a reader hub, whether or not a site is adopted. |
 | `plans/<item>.md` | An item outgrows a few backlog bullets. |
 
 Report-building code, templates and computational inputs stay outside `docs/`, following existing code/data conventions (for example `report_inputs/`). Published browser assets, including chart data, can live beside their report or in an assets subfolder. Include only data intended for readers; keep private inputs out of the site source.
 
+Runtime application reports, private outputs and generated data products are not owner briefings. Keep them in their application-native locations, even if named `reports/`. Link authorized artifacts or deliberately reader-safe derived assets from a briefing when useful; do not import their whole tree into docs or site navigation. Local preview alone is not a privacy boundary.
+
 Do not create empty folders or empty companion files. This map does not authorize removing existing project directories.
 
-## Optional documentation site
+## Reader hub and briefings
 
-- Build directly from maintained `docs/` sources so live preview sees edits. Avoid disposable staging copies. Zensical is one option, not a requirement.
+- Link `docs/index.md` prominently from the README once the hub exists. Put important current briefings first, then reference links. Keep work selection in the backlog.
+- A briefing gives the question or decision, main takeaway, supporting evidence and limitations, and any decision still needed. Use comparisons, tables, charts or diagrams when they improve understanding, not as decoration.
+- Keep durable contracts and definitions in topic docs; link rather than repeat them. Do not manufacture a report for every task.
+- Maintain narratives in Markdown by default. Generate alternate formats from one source; never separately maintain HTML and Markdown versions of the same narrative.
+- Custom HTML or interactive artifacts may be embedded or linked when genuinely useful. An HTML-only narrative is an exception justified by a concrete rendering or interaction need, not an equal default. For generated reports, the builder and inputs are the source; do not maintain a second prose copy of generated content.
+
+## Documentation presentation
+
+- Prefer Zensical as the reader surface when adopting a documentation site. Markdown-only documentation remains sufficient for small projects; common conventions do not require installing site tooling.
+- Build directly from maintained `docs/` sources so live preview sees edits. Avoid disposable staging copies.
 - Keep generated output separate, normally in ignored `site/`.
-- Use `docs/index.md` as the reader hub; put important current briefings first. Site navigation can group pages independently of their folders.
-- Maintain one narrative source and generate other formats from it. An HTML-only report can itself be the source; a generated report's source is its builder and inputs. Do not separately maintain Markdown and HTML versions of the same narrative.
+- Use the existing `docs/index.md` reader hub as the site entry. Site navigation can group pages independently of their folders.
 - Keep published images, JavaScript, styles and chart data inside the site source tree. Report-building machinery and private inputs stay outside it.
 - Document build and live-preview commands in the README. A site rebuild does not itself rerun report calculations; document report regeneration separately when needed.
 - Local preview does not require hosting. Publishing and access controls are a separate decision.
@@ -103,7 +113,9 @@ States: **Current focus** (selected; may be "nothing selected"), **Next** (ready
 ## Adopting into an existing project
 
 1. Map existing files to the ownership table first. Note duplicates, second queues and stale files.
-2. Preserve the project's own rules, safeguards, checks and permissions.
-3. Use the filenames and backlog states in this skill as the shared default. Propose renames or moves toward that default, including `docs/scope.md` when needed, and ask the owner before applying them. Do not silently rename existing files or replace project rules. Include merges and deletions in the proposal.
-4. Agree a safe point with any session actively working in the repo. Do not edit under it.
-5. Remove approved duplicates after preserving their authoritative content and updating links. Keep project-specific content in that project.
+2. Preserve substantive safeguards, checks and permissions, not their duplicated or scattered presentation. Keep application code, data and runtime artifacts in native locations.
+3. Treat this skill's common filenames, ownership and backlog states as the convergence target. Historical layout differences are migration inputs, not permanent exemptions. Agree the common target, then propose each project's explicit move/merge/delete map, authoritative destinations and link updates. Ask the owner before applying it; do not silently rename files or replace project rules.
+4. Check the checkout and relevant remote-tracking state before planning moves. Agree a safe point with any session actively working in the repo. Do not edit under it.
+5. Settle contradictory facts and competing queues first, then common navigation. Remove approved duplicates only after preserving authoritative content and updating links. Keep project-specific content in that project.
+6. Adopt documentation conventions separately from preview/build dependencies. When a site is useful, prefer Zensical and demonstrate it with an existing useful briefing rather than manufacturing reports. Hosting and access decisions remain separate.
+7. Verify links, the sole work queue, preserved safeguards and artifact boundaries, and any adopted site build. Report remaining migration gaps explicitly.
