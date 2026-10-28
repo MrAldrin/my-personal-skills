@@ -11,7 +11,7 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `compact-decision-walkthrough` — review implementation plans one decision at a time
 - `creating-session-handoffs` — create concise handoffs between sessions
 - `delegating-independent-work` — experimental ownership, workspace, handoff and cleanup workflow for independent agents
-- `project-structure` — shared README, AGENTS, backlog, scope, docs and memory structure for new and existing projects
+- `project-structure` — shared README, AGENTS, backlog, scope, documentation and reports structure for new and existing projects
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
 - `using-zellij-with-intercom` — launch visible interactive Pi peers in Zellij tabs and coordinate through intercom without requiring Herdr
 
