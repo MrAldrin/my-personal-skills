@@ -25,7 +25,7 @@ Conductors report through peer messaging; they never edit the shared backlog, ev
 A batch record needs these slots (adapt headings to the project):
 
 - **Brief:** outcome; scope/exclusions; dependencies, including external access; defaults/assumptions; escalation triggers and owner-reserved decisions; done criteria and verification commands.
-- **Assignment:** task owner/session and report target; repository/base change; workspace creator, name/path and agent- versus user-managed status; child fanout authority and edit boundaries.
+- **Assignment:** task owner/session and report target; repository/base change; batch size (small/large) with reason and the resulting Conductor model; workspace creator, name/path and agent- versus user-managed status; child fanout authority and edit boundaries.
 - **Status:** active/blocked/review-ready/integrated, next action, owned children/workspaces and their disposition.
 - **Closeout:** delivered result/change IDs; independent review and checks; limitations, artifacts retained and cleanup; outstanding decisions with a recommendation.
 
@@ -35,7 +35,7 @@ Keep records concise and durable, not transcripts. Unknowns may become explicit 
 
 Every child starts cold: supply objective, exact cwd/base reference, role/skill location, brief reference, edit boundaries, child fanout authority, checks/review, escalation triggers, report target and workspace lifecycle owner. Reference the brief rather than pasting the whole plan. Set model/reasoning from explicit choice or applicable policy and verify the effective selection; loading a skill never sets them.
 
-Use visible interactive Zellij peers for Conductors and bounded subagents for workers/reviewers. Separate concurrent writers into repository-native workspaces, preferably jj; read-only tasks need no new workspace. Parallelize only independent work; one writer per cwd. Do not invent a conductor count or model tier.
+Use visible interactive Zellij peers for Conductors and bounded subagents for workers/reviewers. Separate concurrent writers into repository-native workspaces, preferably jj; read-only tasks need no new workspace. Parallelize only independent work; one writer per cwd. Do not invent a conductor count. Model tiers: Lead is owner-chosen; Conductor is the task-owner tier, sized small or large per batch; workers and reviewers are the bounded tier. Map tiers to models through the applicable machine policy.
 
 ## Recursive workspace lifecycle
 

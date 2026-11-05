@@ -18,7 +18,9 @@ Own one batch's execution through bounded workers and independent reviewers. The
 ## Execute and review
 
 - Split the batch into bounded tasks with checkable outputs; use the harness's bounded subagents for implementation and fresh-context independent review. Apply the shared delegation envelope, applicable model/retry policy and one-writer-per-cwd rule. Give concurrent editors separate repository-native workspaces you create and record.
-- Use subagents for batch implementation, even for small fixes. You coordinate, examine results and resolve integration mechanics. If delegation is unavailable, report the blocker instead of silently implementing the batch yourself.
+- Delegate as much implementation as practical to bounded subagents; you coordinate, examine results and resolve integration mechanics.
+- When a bounded subagent fails, examine why, then reframe or add context and retry at the policy's escalated reasoning level. If that fails, simplify or split the task and retry once more at that level, or do the work yourself. Step in directly when your judgment is the missing piece, such as a small blocker. Work you implement still needs fresh-context independent review.
+- If delegation is unavailable, report the blocker instead of silently implementing the whole batch yourself.
 - Answer within-brief child questions. Escalate explicit triggers, reserved decisions, semantic ambiguities and scope changes to the Lead, or owner for manual sessions, with evidence and a recommendation. A deadline or an offline Lead is not a review waiver.
 - Write only your batch status, decision requests and closeout; preserve the planning-owned brief. Report through peer messaging. Never edit the shared backlog, even to correct a stale row.
 
@@ -28,4 +30,4 @@ Independently reviewed child work is yours to integrate into your assigned batch
 
 Report change IDs, review/check evidence, limits, artifacts and outstanding decisions. The Lead integrates/removes a Lead-created entry workspace; a user-created entry workspace stays user-managed. For a self-created manual execution workspace, you own integration into the agreed destination and safe cleanup. Keep the conversation available to the owner.
 
-**Common traps:** self-review presented as independent review; “helpfully” updating the shared backlog; deleting your entry workspace because you finished. Execution ownership is not ownership of the workspace lifecycle above you.
+**Common traps:** self-review presented as independent review, including of work you implemented; “helpfully” updating the shared backlog; deleting your entry workspace because you finished. Execution ownership is not ownership of the workspace lifecycle above you.
