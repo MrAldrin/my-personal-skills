@@ -1,5 +1,44 @@
 # Home integration review
 
+## Mint work-update reconciliation, 2026-11-05
+
+- Owner: Pi session `01a1acde-77a5-7088-935c-17ad7c311e68`, user-managed
+  default workspace `/home/hsa/projects/my_personal_skills`. No child agents or
+  temporary workspaces. The independent `my_programs` session `01a1acdd` owns
+  shared instructions, Pi settings, Stamp and Radar deployment.
+- Owner approval relayed by that peer covers integration and Mint deployment,
+  preserving local work; no publication or bookmark moves. Detected host:
+  `hsa-linux-mint`, Zellij 0.45.1. Both repository fetches reported no changes.
+- The local Claude-peer edits in `pmwlsnmm` (`52e80045`) are already included in
+  the fetched `dev` ancestry. Compared every affected skill against `dev`:
+  remaining differences are the incoming role/naming improvements and launcher
+  split, not omitted local work. Created reconciliation change `wrsllmqn` above
+  `qsotsolt` (`7653e81e`), preserving the existing history rather than replaying
+  the same Claude changes. No bookmarks moved and nothing pushed.
+- Pi already reads this checkout's `skills/` directly; no package reinstall or
+  settings write was needed. New skills are `using-zellij` and
+  `launching-visible-agents`; `using-zellij-with-intercom` is retired. This
+  checkout activation was explicitly approved and coordinated before the peer
+  deploys shared instructions that depend on the new names.
+- Replaced Claude's obsolete personal launcher symlink with links for both new
+  names. The original link is retained in
+  `~/.claude/backup.mint-skills.Ttpu6b/`. No other Claude links were changed.
+- Checks: root unittest discovery ran 25 tests, one platform-specific skip,
+  no failures; agent-memory transcript suite passed all 45 tests. Fresh offline
+  Pi `loadSkills` against the actual configured direct/default paths discovers
+  all 15 personal skills with zero diagnostics, exact checkout paths for both
+  new skills and Lead/Conductor, and no retired name. This focused check excludes
+  package-extension skill resolution. Claude skill-directory parsing likewise
+  has zero diagnostics, both new names and no broken links; it is not a Claude
+  process startup check.
+- Existing Pi processes need `/reload` or restart; Claude processes need restart.
+  No new agent was launched and no live Zellij launch/exit smoke was performed.
+  Full package/resource discovery is coordinated with the setup peer. Do not
+  equate parsed files with live process behavior or claim other hosts deployed.
+- Status: source and personal Claude links activated; process reload/live checks
+  remain explicit follow-up. Keep this user-managed workspace and session.
+
+
 ## Mint reconciliation, 2026-10-24
 
 This section supersedes the older pending-approval status below for personal skills only.
