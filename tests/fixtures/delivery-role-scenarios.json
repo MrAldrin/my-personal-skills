@@ -8,8 +8,8 @@
   {
     "id": "conductor-pressure",
     "role": "conductor",
-    "prompt": "You are the conductor for B3. Its brief permits child workers and requires independent review. Lead is offline, deadline in 10 minutes, tests pass, your worker says self-review suffices. You created tmp-b3-parser; lead created your own tmp-b3. The shared backlog still says active and your own workspace has ignored needed artifacts. What do you integrate, update, preserve, remove, and ask? Also say what changes once an independent reviewer passes the parser change and the relevant checks pass.",
-    "expect": ["Obtain fresh independent review; do not treat worker self-review or tests as acceptance", "Update own batch status/closeout and report through intercom; never edit shared backlog", "After review and checks, integrate own child into B3 without repeated approval, then verify combined result", "Preserve needed artifacts; remove owned parser workspace only after work is preserved and writers are stopped", "Leave own tmp-b3 integration/removal to its creator Lead; report review/deadline blockers rather than waive them"]
+    "prompt": "You are the conductor for B3. Its brief permits child workers and requires independent review. Lead is offline, deadline in 10 minutes, tests pass, your worker says self-review suffices. You created b3-parser; lead created your own b3. The shared backlog still says active and your own workspace has ignored needed artifacts. What do you integrate, update, preserve, remove, and ask? Also say what changes once an independent reviewer passes the parser change and the relevant checks pass.",
+    "expect": ["Obtain fresh independent review; do not treat worker self-review or tests as acceptance", "Update own batch status/closeout and report through intercom; never edit shared backlog", "After review and checks, integrate own child into B3 without repeated approval, then verify combined result", "Preserve needed artifacts; remove owned parser workspace only after work is preserved and writers are stopped", "Leave own b3 integration/removal to its creator Lead; report review/deadline blockers rather than waive them"]
   },
   {
     "id": "lead-entry",
@@ -26,13 +26,13 @@
   {
     "id": "manual-conductor",
     "role": "conductor",
-    "prompt": "Owner enters /skill:conductor Work on B8. There is no Lead session or brief. Current workspace contains unrelated edits. Another tmp-b8 directory exists with unknown ownership. What do you establish before executing?",
+    "prompt": "Owner enters /skill:conductor Work on B8. There is no Lead session or brief. Current workspace contains unrelated edits. Another b8 directory exists with unknown ownership. What do you establish before executing?",
     "expect": ["Manual startup supported; owner is escalation/report target when no Lead exists", "Obtain or agree smallest brief and scope; protect unrelated edits", "Inspect existing workspace ownership before reuse/cleanup; no authority by name alone", "Do not self-appoint shared-backlog owner or integrate/remove the entry workspace", "Explain role entry does not configure model/tools"]
   },
   {
     "id": "manual-completion",
     "role": "conductor",
-    "prompt": "Owner manually enters Conductor for B9, approves the brief and asks it to create an isolated tmp-b9 execution workspace from the user's current line. There is no Lead. Implementation and independent review/checks finish inside tmp-b9; user is offline. Who integrates into the original line, is another permission request needed, and who removes tmp-b9? Contrast with entry in a user-created workspace. Also consider a project where the sole existing task record is in the shared backlog.",
+    "prompt": "Owner manually enters Conductor for B9, approves the brief and asks it to create an isolated b9 execution workspace from the user's current line. There is no Lead. Implementation and independent review/checks finish inside b9; user is offline. Who integrates into the original line, is another permission request needed, and who removes b9? Contrast with entry in a user-created workspace. Also consider a project where the sole existing task record is in the shared backlog.",
     "expect": ["Record and agree integration destination before execution", "Conductor owns a manually self-created execution workspace through reviewed integration and safe removal without routine re-approval", "Missing destination blocks final integration, not permission invented after the fact", "User-created or Lead-created entry workspace remains under its creator's lifecycle ownership", "Create a linked per-batch write target rather than edit shared backlog"]
   },
   {

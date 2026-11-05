@@ -22,13 +22,13 @@ Discover the normal interactive preferred shell from local preferences, configur
 Linux/WSL example:
 
 ```bash
-zellij action new-tab --name "Review peer" --cwd /path/to/workspace --no-focus
+zellij action new-tab --name "my-app-review" --cwd /path/to/workspace --no-focus
 ```
 
 Native Windows example (tool uses Bash quoting):
 
 ```bash
-zellij action new-tab --name "Review peer" --cwd 'C:/path/to/workspace' --no-focus
+zellij action new-tab --name "my-app-review" --cwd 'C:/path/to/workspace' --no-focus
 ```
 
 Record the returned stable numeric tab ID. List panes, select the terminal pane belonging to that exact tab, and inspect its shell command, cwd and screen. A tab may contain plugins or multiple terminals: never guess the terminal ID from a tab ID or use whichever pane is focused. Replace `terminal_123` below with the verified owned pane ID.
@@ -49,7 +49,7 @@ Wait for the normal shell prompt before submitting input. A held command or blan
 For a Bash-compatible interactive pane, the agent's Bash tool can submit:
 
 ```bash
-zellij action write-chars --pane-id terminal_123 'pi --model "MODEL_WITH_REASONING" --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report your session ID, cwd, PI_MODEL, PI_REASONING_LEVEL, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task and remain interactive."'
+zellij action write-chars --pane-id terminal_123 'pi --model "MODEL_WITH_REASONING" --name my-app-review "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report your session ID, cwd, PI_MODEL, PI_REASONING_LEVEL, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task and remain interactive."'
 zellij action write --pane-id terminal_123 13
 ```
 
@@ -60,7 +60,7 @@ This requires `pi` to resolve in that environment. Discover its normal launcher;
 Inspect existing Pi panes' `pane_command` / `terminal_command` for the actual launcher. Preserve established terminal workarounds. The verified machine uses Nushell as its normal shell and Node with an existing fullscreen mouse launcher. From the agent's Bash tool, submit this Nushell-compatible command:
 
 ```bash
-zellij action write-chars --pane-id terminal_123 'node "C:/path/to/dotfiles/pi/windows-fullscreen-mouse/launch.mjs" --model "MODEL_WITH_REASONING" --name review-peer "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report effective model, reasoning, cwd and session/pane identity. Do not edit or launch agents. Wait for the task and remain interactive."'
+zellij action write-chars --pane-id terminal_123 'node "C:/path/to/dotfiles/pi/windows-fullscreen-mouse/launch.mjs" --model "MODEL_WITH_REASONING" --name my-app-review "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report effective model, reasoning, cwd and session/pane identity. Do not edit or launch agents. Wait for the task and remain interactive."'
 zellij action write --pane-id terminal_123 13
 ```
 
@@ -89,7 +89,7 @@ Do not enable `openProjectPaneIfMissing`: that launches through Herdr. Use exact
 Same shell-first tab and pane-targeted submission. Submit (Bash-compatible pane; adapt quoting for Fish or others):
 
 ```bash
-zellij action write-chars --pane-id terminal_123 'claude --name review-peer --model MODEL --effort EFFORT "Read SKILL_PATH before acting. Send readiness with SendMessage to SUPERVISOR_NAME: report your session name, cwd, model, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task."'
+zellij action write-chars --pane-id terminal_123 'claude --name my-app-review --model MODEL --effort EFFORT "Read SKILL_PATH before acting. Send readiness with SendMessage to SUPERVISOR_NAME: report your session name, cwd, model, ZELLIJ_SESSION_NAME and ZELLIJ_PANE_ID. Do not edit or launch agents. Wait for the task."'
 zellij action write --pane-id terminal_123 13
 ```
 

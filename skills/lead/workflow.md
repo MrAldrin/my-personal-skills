@@ -41,7 +41,7 @@ Use visible interactive Zellij peers for Conductors and bounded subagents for wo
 
 The creator owns a child's workspace lifecycle; the child owns execution within it and any children it creates. This scoped lifecycle rule replaces the generic independent-peer cleanup transfer for this workflow.
 
-Example: the Lead creates `tmp-b3` as the Conductor's execution cwd. The Conductor creates `tmp-b3-parser` for a worker. Conductor integrates `tmp-b3-parser` into `tmp-b3` and removes the parser workspace after checks. Lead integrates `tmp-b3` into the Lead's line and removes the batch workspace after checks. Creator-only removal does not prohibit working or integrating children in the assigned execution cwd.
+Example: the Lead creates workspace `b3` (folder `<repo-folder>-b3`) as the Conductor's execution cwd. The Conductor creates `b3-parser` for a worker. Conductor integrates `b3-parser` into `b3` and removes the parser workspace after checks. Lead integrates `b3` into the Lead's line and removes the batch workspace after checks. Creator-only removal does not prohibit working or integrating children in the assigned execution cwd.
 
 **Manual execution workspace:** agree and record the integration destination before execution. If Conductor creates its own isolated execution workspace, Conductor owns reviewed integration into that destination and safe removal, without routine re-approval. A user-created entry workspace remains user-managed unless ownership is explicitly transferred. A missing destination blocks final integration; do not guess it.
 

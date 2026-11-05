@@ -62,8 +62,8 @@ class DeliveryRolePackagingTests(unittest.TestCase):
         contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
         # Removing this direction example reintroduces the observed confusion:
         # a Conductor refused to integrate a child into its assigned batch cwd.
-        self.assertIn("Conductor integrates `tmp-b3-parser` into `tmp-b3`", contract)
-        self.assertIn("Lead integrates `tmp-b3` into the Lead's line", contract)
+        self.assertIn("Conductor integrates `b3-parser` into `b3`", contract)
+        self.assertIn("Lead integrates `b3` into the Lead's line", contract)
 
     def test_manual_execution_workspace_names_its_integration_destination(self) -> None:
         contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
