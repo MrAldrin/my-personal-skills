@@ -52,7 +52,7 @@ Not yet agreed in detail.
 - The role is in the system prompt from the first message; the agent cannot forget to read it.
 - pi-subagents agent files are for subagents only. Visible sessions get the same building blocks through `pi` flags.
 - The owner can still start a conductor by hand: run the same launcher, or say "Conduct batch: B3" in a normal session (weaker fallback through AGENTS.md).
-- Must fit the shell-first Zellij launch now in `using-zellij-with-intercom` (change `zsxytqyw`): open the preferred shell, then start Pi in it.
+- Must fit the shell-first Zellij launch now in `launching-visible-agents` (change `zsxytqyw`): open the preferred shell, then start Pi in it.
 
 ## Research summary
 
@@ -108,7 +108,7 @@ Details and sources: [agent-orchestration-research/](agent-orchestration-researc
 - New skill: session phrases ("Plan with me", "Conduct batch", "Morning review"), brief template, build-on-assumptions plus go-live list, research -> `[human]` decision chains, standing integration rule, reasoning by judgment, reviewer tier, local/remote split.
 - Existing skills:
   - `delegating-independent-work`: artifact relocation before workspace removal; reviewer tier.
-  - `using-zellij-with-intercom`: Nushell forward slashes; verify the effective model.
+  - `launching-visible-agents`: Nushell forward slashes; verify the effective model.
   - `version-control-workflow`: non-interactive jj; timeouts; abandon empty orphan heads after workspace forget.
   - `grill-with-docs`: record decisions in owning docs as each settles.
   - `project-structure`: backlog sections and the batch-file layout.

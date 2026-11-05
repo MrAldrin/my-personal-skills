@@ -13,7 +13,8 @@ A personal collection of Agent Skills shared across machines and compatible harn
 - `delegating-independent-work` — experimental ownership, workspace, handoff and cleanup workflow for independent agents
 - `project-structure` — shared README, AGENTS, backlog, scope, documentation and reports structure for new and existing projects
 - `version-control-workflow` — plan atomic Jujutsu changes, enforce description conventions, and leave a verified stack for user review
-- `using-zellij-with-intercom` — launch visible interactive Pi peers in Zellij tabs and coordinate through intercom without requiring Herdr
+- `launching-visible-agents` — launch visible interactive Pi or Claude Code peers in Zellij tabs and verify them through intercom or Claude messaging without requiring Herdr
+- `using-zellij` — Zellij pane and tab mechanics for agents: own-tab discovery, floating job panes, named tabs and cleanup
 
 ### Grilling and domain modeling
 

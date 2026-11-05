@@ -1,48 +1,19 @@
-# Zellij / Pi / Claude Code command reference
+# Pi / Claude Code launch command reference
 
-Run Zellij commands through the agent's shell tool. Two shells matter: the tool's shell parses the Zellij invocation; the new pane's interactive shell parses the submitted Pi command. Quote for each separately. Examples below use Bash for the tool and Bash-compatible or Nushell syntax in the pane, as labelled. Replace paths, tab/session names, `MODEL_WITH_REASONING` and `SUPERVISOR_SESSION_ID` with discovered or policy-selected values. No helper script or Herdr installation is required.
+Run Zellij commands through the agent's shell tool. Two shells matter: the tool's shell parses the Zellij invocation; the new pane's interactive shell parses the submitted Pi command. Quote for each separately. Examples below use Bash for the tool and Bash-compatible or Nushell syntax in the pane, as labelled. Replace paths, tab/session names, `MODEL_WITH_REASONING` and `SUPERVISOR_SESSION_ID` with discovered or policy-selected values. No helper script or Herdr installation is required. Tab and pane mechanics are in [using-zellij commands](../using-zellij/commands.md).
 
-## Inspect
+## Inspect the launcher
 
-- `zellij --version`
-- `zellij action new-tab --help`
-- `zellij action list-tabs --help`
-- `zellij action list-panes --help`
-- `zellij action write-chars --help`
-- `zellij action write --help`
-- `zellij action dump-screen --help`
-- `pi --help` (or the discovered local launcher with `--help`)
-
-Use the inherited Zellij session. Environment variables alone do not prove connectivity: inspect live tabs and panes. If explicitly selecting another session, inspect local session-selection syntax first. The tested 0.45.1 supports `list-tabs --all --json` and `list-panes --all --json`; adapt only after checking local help. If `--no-focus` is absent, explain the focus change before launching. Verify Pi's naming/model flags too.
+- `pi --help` (or the discovered local launcher with `--help`). Verify its `--name` and `--model` flags.
+- `claude --help` for `--name`, `--model` and `--effort` when launching Claude Code.
 
 ## Open the normal shell first
 
-Discover the normal interactive preferred shell from local preferences, configuration and existing shell panes. Create the tab without an initial command, allowing that normal shell to start. Do not add `-- pi`, `-- node`, `exec`, a replacement shell command, or a layout that directly starts Pi. Do not use `--close-on-exit`: closing Pi's pane is not returning to a shell prompt. If the default shell does not match the preference, stop and resolve the mismatch rather than redesigning configuration.
-
-Linux/WSL example:
-
-```bash
-zellij action new-tab --name "my-app-review" --cwd /path/to/workspace --no-focus
-```
-
-Native Windows example (tool uses Bash quoting):
-
-```bash
-zellij action new-tab --name "my-app-review" --cwd 'C:/path/to/workspace' --no-focus
-```
-
-Record the returned stable numeric tab ID. List panes, select the terminal pane belonging to that exact tab, and inspect its shell command, cwd and screen. A tab may contain plugins or multiple terminals: never guess the terminal ID from a tab ID or use whichever pane is focused. Replace `terminal_123` below with the verified owned pane ID.
-
-```bash
-zellij action list-panes --all --json
-zellij action dump-screen --pane-id terminal_123
-```
-
-Wait for the normal shell prompt before submitting input. A held command or blank screen is not a ready shell.
+Create the tab and verify its shell prompt as [using-zellij](../using-zellij/commands.md) describes. Never add `-- pi`, `-- node` or a layout that starts Pi directly.
 
 ## Submit foreground Pi to the owned shell
 
-`write-chars` types the command; the separate `write ... 13` submits Enter on the tested version. Recheck exact pane ownership and idle prompt immediately before submission. If installed Zellij lacks explicit stable targeting, do not fall back to focused input; resolve supported targeting first.
+Recheck exact pane ownership and idle prompt immediately before submission. If installed Zellij lacks explicit stable targeting, do not fall back to focused input.
 
 ### Linux / WSL
 
@@ -57,7 +28,7 @@ This requires `pi` to resolve in that environment. Discover its normal launcher;
 
 ### Native Windows
 
-Inspect existing Pi panes' `pane_command` / `terminal_command` for the actual launcher. Preserve established terminal workarounds. The verified machine uses Nushell as its normal shell and Node with an existing fullscreen mouse launcher. From the agent's Bash tool, submit this Nushell-compatible command:
+Inspect existing Pi panes' `pane_command` / `terminal_command` for the actual launcher. Preserve established local launcher workarounds. The verified machine uses Nushell as its normal shell and Node with an existing fullscreen mouse launcher. From the agent's Bash tool, submit this Nushell-compatible command:
 
 ```bash
 zellij action write-chars --pane-id terminal_123 'node "C:/path/to/dotfiles/pi/windows-fullscreen-mouse/launch.mjs" --model "MODEL_WITH_REASONING" --name my-app-review "Send readiness via intercom to SUPERVISOR_SESSION_ID. Report effective model, reasoning, cwd and session/pane identity. Do not edit or launch agents. Wait for the task and remain interactive."'
@@ -93,7 +64,7 @@ zellij action write-chars --pane-id terminal_123 'claude --name my-app-review --
 zellij action write --pane-id terminal_123 13
 ```
 
-Check `claude --help` for `--name`, `--model` and `--effort`. Find the supervisor's own name with `ListAgents` before launch. Then:
+Find the supervisor's own name with `ListAgents` before launch. Then:
 
 1. `ListAgents` to find the exact peer name.
 2. `SendMessage` a ping; wait for its reply (a message wakes an idle session).
@@ -104,5 +75,3 @@ Same-machine only; Windows and WSL sessions cannot reach each other. Exiting Cla
 ## Verify lifecycle with an authorized disposable tab
 
 On a new launch route, obtain approval for a uniquely named disposable tab and record its stable tab/pane IDs. Start Pi as above. Use Pi's locally supported exit interaction only in that disposable pane; inspect return to the normal shell prompt, then submit a harmless shell marker (for example `echo PI_SHELL_RETURNED`) and verify its output. Finally submit `exit` to the same disposable shell and verify its pane disappears rather than becoming held. Never test exit on a live user peer. Native Windows Zellij 0.45.1 was tested; Linux/WSL needs its own local verification.
-
-Leave successful task-owner tabs open for direct user conversation. Persistence requires a running Pi process and Zellij session; after restart refresh both rosters. Closing a pane/tab is destructive: verify ownership and disposability first, and never use focus-dependent cleanup.

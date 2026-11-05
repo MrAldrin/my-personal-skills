@@ -14,7 +14,7 @@
 
 Pi must run as a foreground child of the normal interactive preferred shell. Exiting Pi must return to that shell's prompt; exiting the shell must close its pane normally. Preserve platform-specific syntax and the existing Windows fullscreen mouse launcher. Do not replace the shell, use a direct Pi pane command, or treat closing the pane on Pi exit as equivalent.
 
-Scope: `skills/using-zellij-with-intercom/SKILL.md`, its `commands.md`, this tracking record, and focused supporting checks if needed. Canonical portable preference belongs to the coordinator's `my_programs/agents/core.md` Shell section. No bookmarks, push, integration, installation, configuration redesign, or active deployment.
+Scope: `skills/launching-visible-agents/SKILL.md`, its `commands.md`, `skills/using-zellij/`, this tracking record, and focused supporting checks if needed. Canonical portable preference belongs to the coordinator's `my_programs/agents/core.md` Shell section. No bookmarks, push, integration, installation, configuration redesign, or active deployment.
 
 ## Inspection evidence
 

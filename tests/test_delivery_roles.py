@@ -88,7 +88,8 @@ class DeliveryRolePackagingTests(unittest.TestCase):
         text = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
         for dependency in (
             "delegating-independent-work",
-            "using-zellij-with-intercom",
+            "launching-visible-agents",
+            "using-zellij",
             "version-control-workflow",
             "project-structure",
         ):

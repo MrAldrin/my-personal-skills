@@ -43,7 +43,8 @@ Install/update `lead` and `conductor` **together**. Both require the single [sha
 Existing local skills provide mechanics:
 
 - `delegating-independent-work`
-- `using-zellij-with-intercom`
+- `launching-visible-agents`
+- `using-zellij`
 - `version-control-workflow`
 - `project-structure`
 

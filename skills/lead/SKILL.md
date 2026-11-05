@@ -17,7 +17,7 @@ Own the overall goal and coordination, not batch implementation. Enter in the cu
 
 ## Dispatch and coordinate
 
-- Normally start a visible Conductor for each ready batch using `using-zellij-with-intercom`, in an isolated workspace you create and record by default; skip it only for read-only batches. Keep the owner able to talk directly to it.
+- Normally start a visible Conductor for each ready batch using `launching-visible-agents`, in an isolated workspace you create and record by default; skip it only for read-only batches. Keep the owner able to talk directly to it.
 - Size each batch as small or large before launch and choose the Conductor model from the applicable model policy for that size. Record the size and a one-line reason in the batch assignment and continue; the owner may override.
 - The owner starts and chooses the model for a top-level Lead. For an unusually large area, you may propose a child Lead that coordinates its own batches; launch it only with owner approval, and ask for its model if the owner has not given one.
 - Resolve the installed `conductor` skill location from skill discovery or this bundle's sibling directory. Include an explicit instruction to read its `SKILL.md` and required shared contract before task execution. A plain mention of “conductor” is not reliable skill loading; do not assume slash text passed as a CLI prompt is executed as a command.

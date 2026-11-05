@@ -68,7 +68,7 @@ Lead and Conductor in one delivery use the same harness. The contract is identic
 Read the named skill when performing its operation; do not load every dependency upfront:
 
 - `delegating-independent-work`: isolation, naming, durable handoff and recovery; retain this contract's creator lifecycle ownership and standing integration authority.
-- `using-zellij-with-intercom` (both harnesses) and, in Pi, `pi-intercom`: shell-first visible launch, exact session readiness and two-way communication. If unavailable, report the failed check and ask before choosing another surface.
+- `launching-visible-agents` (both harnesses) and, in Pi, `pi-intercom`: shell-first visible launch, exact session readiness and two-way communication; it uses `using-zellij` for pane and tab mechanics. If unavailable, report the failed check and ask before choosing another surface.
 - `pi-subagents` (Pi) or the `Agent` tool (Claude Code): bounded worker/reviewer launch, supervisor escalation and fresh review. Follow applicable model/retry policy. Missing launch dependencies block the affected dispatch, not planning.
 - `version-control-workflow`: inspect state, atomic changes and safe jj mechanics, with this contract's scoped integration exception.
 - `project-structure`: existing backlog and document conventions; do not restructure a project merely to enter a role.
