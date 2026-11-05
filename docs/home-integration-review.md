@@ -35,6 +35,16 @@
   No new agent was launched and no live Zellij launch/exit smoke was performed.
   Full package/resource discovery is coordinated with the setup peer. Do not
   equate parsed files with live process behavior or claim other hosts deployed.
+- Setup-peer follow-up: session `01a1acdd` reports full fresh offline
+  `DefaultResourceLoader` discovery using actual settings in a disposable cwd:
+  zero extension errors, one Stamp and `/stamp`, both replacement skills plus
+  Lead/Conductor resolving to this checkout, and Autonomy/local append loaded.
+  These are peer-reported checks, not independently rerun here.
+- Corrected incoming `AGENTS.md` activation guidance against the setup repo's
+  authoritative `docs/work-machine-pi-skills.md`: WSL reads Windows checkouts
+  directly through `/mnt/c`; the obsolete mirror/startup sync must not be
+  recreated. The shared guidance links to the owning document rather than
+  prescribing the retired procedure. No Windows/WSL host changes were made.
 - Status: source and personal Claude links activated; process reload/live checks
   remain explicit follow-up. Keep this user-managed workspace and session.
 

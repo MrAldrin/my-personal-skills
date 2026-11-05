@@ -31,18 +31,15 @@
 - Windows Pi reads this checkout's `skills/` directly. Once the working copy has
   the desired changes, `/reload` or a new Pi session loads them. Ordinary skill
   edits need no package reinstall, publication or push for local use.
-- WSL Pi intentionally reads a Linux-local mirror for performance. The normal
-  Fish `pi` function runs `pi-sync-skills` before launching Pi, copying from the
-  Windows checkout. Keeping that checkout current therefore supplies both
-  environments. Do not replace the mirror with direct `/mnt/c` loading or add
-  a second checkout merely to make them use the same skills.
-- A stale WSL mirror before the next Fish `pi` launch is expected, not evidence
-  of broken sync or incomplete deployment. Lead with: **the next normal Fish
-  `pi` launch refreshes it automatically; no manual sync is needed.** WezTerm
-  itself is not the sync trigger. Direct executable launches can bypass it.
-- `/reload` in an existing WSL Pi process does not run the startup sync. If the
-  owner needs immediate activation there, explain the restart option; only
-  perform an approved manual refresh when needed. Otherwise leave it alone.
+- Windows and WSL read the shared Windows skill checkouts directly; WSL uses
+  `/mnt/c` paths. The old mirror and `pi-sync-skills` startup sync were removed.
+  Do not recreate them or add a second checkout to activate ordinary skill edits.
+- The authoritative loading arrangement and platform-specific sources live in
+  `../my_programs/docs/work-machine-pi-skills.md`; read that document before
+  changing discovery or startup. Inspect both environments' local settings when
+  paths change, rather than assuming one settings file configures both.
+- Existing Windows and WSL Pi processes need `/reload` or restart to load updated
+  skills. No Fish startup sync or manual mirror refresh is required.
 - The current remote reminder is advisory: it compares remote `main` with the
   fetched `origin/main`, not with `@`. It does not fetch, move files, check `dev`,
   or prove that loaded skills are current. Do not treat silence as proof of sync.
@@ -53,7 +50,7 @@
   renamed skills and duplicate legacy discovery sources can require action;
   ordinary Markdown edits usually do not. Inspect all configured sources before
   removing an obsolete personal link; preserve custom edits and shared sources.
-- Skill mirroring does not deploy global `AGENTS.md`, extensions, packages or
+- Updating skill checkouts does not deploy global `AGENTS.md`, extensions, packages or
   machine settings. Route setup changes through `my_programs` and its deployment
   gates. Do not copy entire agent directories, credentials, sessions or home
   machine settings onto this machine.
@@ -61,8 +58,8 @@
   or opening a new tab in a surviving Zellij session may retain old environment
   variables. Inspect the affected shell and parent session before prescribing
   restarts or permanent PATH edits; preserve running tasks.
-- Report only the actual remaining action: repository update, Windows reload,
-  automatic refresh on next WSL Fish launch, or a specific migration. Distinguish
+- Report only the actual remaining action: repository update, Windows/WSL reload
+  or restart, or a specific migration. Distinguish
   verified files/tests from fresh-session discovery not yet observed. Do not
   turn an optional immediate refresh into a blocker or repeat approval requests
   for actions already authorized within the current task's scope.
