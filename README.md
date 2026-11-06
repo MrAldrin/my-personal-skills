@@ -2,6 +2,11 @@
 
 A personal collection of Agent Skills shared across machines and compatible harnesses.
 
+## Tasks
+
+See [the task-store guide](docs/beads.md) and [source-to-ID pointer](backlog.md).
+Beads owns current task status; migration does not authorize queued skill work.
+
 ## Skills
 
 - `lead` — explicitly entered role for planning and coordinating delivery through visible Conductors

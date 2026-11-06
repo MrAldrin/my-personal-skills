@@ -1,5 +1,10 @@
 # Agent instructions
 
+- Task status is in the canonical local Beads store. Follow
+  [the task-store guide](docs/beads.md) for explicit store selection, ownership,
+  privacy and native recovery. Do not use workspace-local discovery or treat
+  historical approval as current authority.
+
 - This repository holds personal skills shared across the user's machines. See
   [README](README.md) for the skill list.
 - The sibling repository `../my_programs` installs these skills and owns machine

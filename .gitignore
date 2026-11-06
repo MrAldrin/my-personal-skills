@@ -6,6 +6,10 @@ __pycache__/
 # Local/editor files
 .DS_Store
 
+# Private native task store and sibling gate; never commit runtime data
+/.beads/
+/.beads.gate.lock
+
 # Mail transport artifacts; the extracted files are the source of truth
 /pi-personal-skills-source.txt
 /pi-personal-skills-source.txt.sha256
