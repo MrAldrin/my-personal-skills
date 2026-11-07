@@ -109,7 +109,7 @@ Details and sources: [agent-orchestration-research/](agent-orchestration-researc
 - Existing skills:
   - `delegating-independent-work`: artifact relocation before workspace removal; reviewer tier.
   - `launching-visible-agents`: Nushell forward slashes; verify the effective model.
-  - `version-control-workflow`: non-interactive jj; timeouts; abandon empty orphan heads after workspace forget.
+  - `jujutsu` (upstream skill): non-interactive jj; timeouts; abandon empty orphan heads after workspace forget.
   - `grill-with-docs`: record decisions in owning docs as each settles.
   - `project-structure`: backlog sections and the batch-file layout.
 - Scripts later, only if friction continues: an integration helper (rebase, list conflicts, run checks); a verified peer launcher.

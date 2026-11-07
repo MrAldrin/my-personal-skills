@@ -90,11 +90,11 @@ class DeliveryRolePackagingTests(unittest.TestCase):
             "delegating-independent-work",
             "launching-visible-agents",
             "using-zellij",
-            "version-control-workflow",
             "project-structure",
         ):
             self.assertIn(dependency, text)
             self.assertTrue((SKILLS / dependency / "SKILL.md").is_file())
+        self.assertIn("jujutsu", text)
         self.assertIn("pi-subagents", text)
         self.assertIn("pi-intercom", text)
 

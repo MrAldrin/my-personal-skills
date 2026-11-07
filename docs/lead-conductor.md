@@ -45,7 +45,7 @@ Existing local skills provide mechanics:
 - `delegating-independent-work`
 - `launching-visible-agents`
 - `using-zellij`
-- `version-control-workflow`
+- `jujutsu` (upstream, installed as a Pi package)
 - `project-structure`
 
 The runtime also needs Pi with `pi-intercom`, `pi-subagents`, Zellij, and jj for this intended setup. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
