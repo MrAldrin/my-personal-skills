@@ -13,8 +13,8 @@ workspace-local task store. Before each operation, select it explicitly and
 check `where`; stop if the path or prefix is not the expected one:
 
 ```sh
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --sandbox --readonly where
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --sandbox --readonly list --all --limit 0
+env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly where
+env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly list --all --limit 0
 ```
 
 These commands work in Fish and POSIX shells. Expected prefix: `ps`. A pointer
@@ -42,9 +42,10 @@ Do not harden shared parent directories. A private child session alone is not
 sufficient. Before private child reads, run doctor and a fresh no-tool canary;
 verify effective model, reasoning, zero tool calls and process termination.
 
-Anonymous metrics, automatic push, automatic backup, backup Git push,
-automatic export and export staging must remain disabled. No task remotes are
-configured. Use `--sandbox`; do not change Git remotes, index, hooks or locks.
+Anonymous metrics, automatic backup, backup Git push, automatic export and
+export staging must remain disabled. Sync follows "Sync with GitHub" in the
+shared PRIME.md; the Beads data remote is MrAldrin/my-personal-skills-beads
+(private). Do not change code Git remotes, index, hooks or locks.
 The local native backup destination is
 `/home/hsa/.local/share/beads-backups/my_personal_skills/native`.
 With the verified explicit store, `backup init <private-destination>` configures

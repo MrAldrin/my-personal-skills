@@ -4,6 +4,7 @@
   [the task-store guide](docs/beads.md) for explicit store selection, ownership,
   privacy and native recovery. Do not use workspace-local discovery or treat
   historical approval as current authority.
+- Sync: follow "Sync with GitHub" in the shared PRIME.md. Beads data remote: MrAldrin/my-personal-skills-beads (private).
 
 - This repository holds personal skills shared across the user's machines. See
   [README](README.md) for the skill list.

@@ -7,8 +7,8 @@ See the [task-store guide](docs/beads.md) for claims, privacy and native recover
 Read-only checks:
 
 ```sh
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --sandbox --readonly where
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --sandbox --readonly list --all --limit 0
+env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly where
+env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly list --all --limit 0
 ```
 
 ## Source mapping
