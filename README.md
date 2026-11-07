@@ -11,7 +11,6 @@ Beads owns current task status; migration does not authorize queued skill work.
 
 - `lead` — explicitly entered role for planning and coordinating delivery through visible Conductors
 - `conductor` — explicitly assigned batch-owner role; install with `lead` ([usage and dependencies](docs/lead-conductor.md))
-- `agent-memory` — project memory capture, lookup, and transcript review
 - `copying-to-clipboard` — request-only, verified UTF-8 clipboard text on Windows and WSL
 - `compact-decision-walkthrough` — review implementation plans one decision at a time
 - `creating-session-handoffs` — create concise handoffs between sessions
@@ -51,14 +50,11 @@ After updating the clone or package, restart Pi or run `/reload`.
 
 ## Test
 
-Run the skill-set packaging checks and transcript helper's standard-library suite:
+Run the skill-set packaging checks:
 
 ```bash
 uv run --no-project python -m unittest discover -s tests -v
-uv run --no-project python -m unittest discover -s skills/agent-memory/tests -v
 ```
-
-The `agent-memory` skill reads both Pi v3 and Claude Code session files and documents commands through `uv`.
 
 ## Safety
 
