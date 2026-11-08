@@ -1,14 +1,14 @@
 # Backlog
 
 Task status is tracked in the local Beads store at
-`/home/hsa/projects/my_personal_skills/.beads`.
+`/home/hsa/projects/my-personal-skills/.beads`.
 Use this same explicit store from every Jujutsu workspace.
 See the [task-store guide](docs/beads.md) for claims, privacy and native recovery.
 Read-only checks:
 
 ```sh
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly where
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly list --all --limit 0
+env BEADS_DIR=/home/hsa/projects/my-personal-skills/.beads bd -C /home/hsa/projects/my-personal-skills --readonly where
+env BEADS_DIR=/home/hsa/projects/my-personal-skills/.beads bd -C /home/hsa/projects/my-personal-skills --readonly list --all --limit 0
 ```
 
 ## Source mapping

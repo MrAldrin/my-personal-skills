@@ -3,7 +3,7 @@
 ## Delivered
 
 The two unfinished root backlog items were migrated to the sole local native
-store `/home/hsa/projects/my_personal_skills/.beads`:
+store `/home/hsa/projects/my-personal-skills/.beads`:
 
 1. `ps-q5b`: Mint work-update reconciliation.
 2. `ps-1sz`: Mint/Fedora clipboard support.
@@ -47,7 +47,7 @@ No bookmark moved and nothing was published.
 ## Retained evidence and recovery
 
 Private evidence root:
-`/home/hsa/.local/share/beads-migration-runtimes/my_personal_skills/evidence`.
+`/home/hsa/.local/share/beads-migration-runtimes/my-personal-skills/evidence`.
 It retains original source snapshots and hashes, exact import, per-store command
 captures, mode corrections, reviewed files, raw review and activation packet.
 The complete frozen native store and sibling gate remain at the adjacent
@@ -58,13 +58,13 @@ The complete frozen native store and sibling gate remain at the adjacent
 - Exact import SHA-256:
   `e8c1fb3bbd8010386a9b1bf8c3fe33b22cb95ae5bc78a9fb479fb2a355807dc1`.
 - Operational native backup:
-  `/home/hsa/.local/share/beads-backups/my_personal_skills/native`.
+  `/home/hsa/.local/share/beads-backups/my-personal-skills/native`.
 - NEW canonical backup:
-  `/home/hsa/.local/share/beads-backups/my_personal_skills/canonical-native-20261106`.
+  `/home/hsa/.local/share/beads-backups/my-personal-skills/canonical-native-20261106`.
 - NEW canonical restore:
-  `/home/hsa/.local/share/beads-migration-runtimes/my_personal_skills/canonical-restore-20261106`.
+  `/home/hsa/.local/share/beads-migration-runtimes/my-personal-skills/canonical-restore-20261106`.
 - Lead proof and raw captures:
-  `/home/hsa/.local/share/beads-backups/my_personal_skills/lead-activation-20261106/verification.json`.
+  `/home/hsa/.local/share/beads-backups/my-personal-skills/lead-activation-20261106/verification.json`.
 
 ## Limits and lifecycle
 

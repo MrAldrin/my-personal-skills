@@ -3,7 +3,7 @@
 ## Mint work-update reconciliation, 2026-11-05
 
 - Owner: Pi session `01a1acde-77a5-7088-935c-17ad7c311e68`, user-managed
-  default workspace `/home/hsa/projects/my_personal_skills`. No child agents or
+  default workspace `/home/hsa/projects/my-personal-skills`. No child agents or
   temporary workspaces. The independent `my_programs` session `01a1acdd` owns
   shared instructions, Pi settings, Stamp and Radar deployment.
 - Owner approval relayed by that peer covers integration and Mint deployment,
@@ -54,7 +54,7 @@
 This section supersedes the older pending-approval status below for personal skills only.
 
 - Owner: session `01a16e14-7cc4-72ae`, user-managed default workspace
-  `/home/hsa/projects/my_personal_skills`. No child agents or temporary workspaces.
+  `/home/hsa/projects/my-personal-skills`. No child agents or temporary workspaces.
   The independent `my_programs` peer owns configuration deployment and its evidence.
 - User approved implementing local reconciliation and deployment, leaving publication
   to the user. No bookmarks moved and nothing pushed.

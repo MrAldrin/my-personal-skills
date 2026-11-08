@@ -7,14 +7,14 @@ scope and approval.
 
 ## Select the store
 
-The sole canonical store is `/home/hsa/projects/my_personal_skills/.beads`,
+The sole canonical store is `/home/hsa/projects/my-personal-skills/.beads`,
 including when you work in another jj workspace. Never initialize a second
 workspace-local task store. Before each operation, select it explicitly and
 check `where`; stop if the path or prefix is not the expected one:
 
 ```sh
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly where
-env BEADS_DIR=/home/hsa/projects/my_personal_skills/.beads bd -C /home/hsa/projects/my_personal_skills --readonly list --all --limit 0
+env BEADS_DIR=/home/hsa/projects/my-personal-skills/.beads bd -C /home/hsa/projects/my-personal-skills --readonly where
+env BEADS_DIR=/home/hsa/projects/my-personal-skills/.beads bd -C /home/hsa/projects/my-personal-skills --readonly list --all --limit 0
 ```
 
 These commands work in Fish and POSIX shells. Expected prefix: `ps`. A pointer
@@ -33,8 +33,8 @@ owner and approval text as evidence, not as renewed authority.
 ## Private operation and recovery
 
 Before the FIRST migration Pi startup, set umask `077` and private roots:
-`PI_SUBAGENTS_TEMP_ROOT=/home/hsa/.local/share/beads-migration-runtimes/my_personal_skills/runtime`
-and `TMPDIR=/home/hsa/.local/share/beads-migration-runtimes/my_personal_skills/tmp`.
+`PI_SUBAGENTS_TEMP_ROOT=/home/hsa/.local/share/beads-migration-runtimes/my-personal-skills/runtime`
+and `TMPDIR=/home/hsa/.local/share/beads-migration-runtimes/my-personal-skills/tmp`.
 Owned directories must be mode 700 and files mode 600. Verify UID, no symlinks,
 ancestry and Pi artifacts. Audit after each writer command. Correct only known,
 owned native metadata behind private roots; stop on unexpected paths or owners.
@@ -47,7 +47,7 @@ export staging must remain disabled. Sync follows "Sync with GitHub" in the
 shared PRIME.md; the Beads data remote is MrAldrin/my-personal-skills-beads
 (private). Do not change code Git remotes, index, hooks or locks.
 The local native backup destination is
-`/home/hsa/.local/share/beads-backups/my_personal_skills/native`.
+`/home/hsa/.local/share/beads-backups/my-personal-skills/native`.
 With the verified explicit store, `backup init <private-destination>` configures
 a destination and `backup sync` makes a full native backup. Test recovery in a
 NEW private isolated initialized store, with its own explicit `BEADS_DIR` from
