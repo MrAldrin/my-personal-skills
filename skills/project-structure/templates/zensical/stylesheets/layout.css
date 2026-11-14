@@ -1,0 +1,27 @@
+/* Wider page and less empty space at the sides. */
+.md-grid {
+  max-width: 100rem;
+}
+
+/* Buttons in the top bar hide the left menu or the right page overview.
+   Desktop only: on small screens the menu is already a drawer. */
+.aw-layout-toggle {
+  display: none;
+}
+
+@media screen and (min-width: 76.25em) {
+  .aw-layout-toggle {
+    display: inline-block;
+    opacity: 0.7;
+  }
+
+  .aw-layout-toggle:hover,
+  .aw-layout-toggle[aria-pressed="true"] {
+    opacity: 1;
+  }
+
+  body.aw-hide-nav .md-sidebar--primary,
+  body.aw-hide-toc .md-sidebar--secondary {
+    display: none;
+  }
+}

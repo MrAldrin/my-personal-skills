@@ -30,6 +30,10 @@ For independent task ownership, workspace naming, durable status, handoff, and c
 - Verify a two-way ping, using pi-intercom's messaging rules.
 - Then send the task, constraints, isolation details, expected report, and permission boundaries for edits/subagent fanout. Leave the peer interactive afterward. Report its tab name and session identity so the user can take over.
 
+### Dispatch through Beads
+
+For a role that defines a Beads handoff, put the exact bead ID and store selection in the initial prompt along with the role instructions. Use this prompt in place of the readiness ping and subsequent task message. Ask the peer to verify its cwd, model and reasoning against the assignment before claiming, and identify its session in the bead. Check the exact pane for startup and the bead for the matching claim. If these checks disagree or the claim does not appear, inspect startup and ownership before retrying. Use the messaging roster to verify the exact target when a question or intervention requires contact.
+
 ## Verify shell lifecycle
 
 When validating a new launch route, obtain approval for one disposable test tab. Verify Pi starts inside its normal shell, exit only that disposable Pi, and confirm the shell prompt can run a harmless marker command. Then exit that disposable shell and verify its pane closes normally. Target the recorded stable pane throughout; never test exit on a live user peer. Record the tested platform and limitations; native Windows results do not establish Linux/WSL behavior.

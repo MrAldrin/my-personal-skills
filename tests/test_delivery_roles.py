@@ -70,10 +70,18 @@ class DeliveryRolePackagingTests(unittest.TestCase):
         self.assertIn("Manual execution workspace", contract)
         self.assertIn("integration destination", contract)
 
-    def test_shared_backlog_only_record_has_a_conductor_write_target(self) -> None:
-        contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
-        self.assertIn("shared-backlog entry", contract)
-        self.assertIn("linked batch record before dispatch", contract)
+    def test_role_bundle_uses_beads_for_batch_tracking(self) -> None:
+        paths = (
+            SKILLS / "lead/SKILL.md",
+            SKILLS / "lead/workflow.md",
+            SKILLS / "conductor/SKILL.md",
+            ROOT / "docs/lead-conductor.md",
+        )
+        for path in paths:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("batch bead", text)
+                self.assertNotIn("plans/batches/", text)
 
     def test_role_bundle_has_no_launch_scripts_or_machine_paths(self) -> None:
         for role in ROLES:

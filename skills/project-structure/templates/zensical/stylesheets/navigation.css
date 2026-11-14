@@ -1,0 +1,31 @@
+/* Left menu: make the three levels look different.
+   1. Section titles (Primitives, Tools compared ...): large, bold, solid colour.
+   2. Groups inside a section (Work tracking ...): bold, solid colour.
+   3. Page links: normal weight, theme's dimmed colour (unchanged).
+   Uses --aw-heading-color from headings.css. Desktop sidebar only. */
+@media screen and (min-width: 76.25em) {
+  .md-nav--primary > .md-nav__list > .md-nav__item--section {
+    margin-top: 1.4em;
+  }
+
+  .md-nav--primary > .md-nav__list > .md-nav__item--section > .md-nav__link {
+    color: var(--aw-heading-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding-bottom: 0.3em;
+    margin-bottom: 0.3em;
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  }
+
+  .md-nav--primary .md-nav__item--section .md-nav__item--nested > .md-nav__link {
+    color: var(--aw-heading-color);
+    font-weight: 600;
+  }
+
+  /* Keep the current page highlighted. */
+  .md-nav--primary .md-nav__link--active,
+  .md-nav--primary .md-nav__link:hover {
+    color: var(--md-accent-fg-color);
+  }
+}

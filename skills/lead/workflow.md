@@ -12,28 +12,33 @@ For work explicitly delegated under this workflow, the creator has standing auth
 
 ## Records and writers
 
-Use existing project records; use `project-structure` when structure needs establishing. Default to one batch file at `plans/batches/<id>.md` and a Lead-owned shared backlog. If the task record is only a shared-backlog entry, establish a linked batch record before dispatch; Conductors write there, not in the backlog.
+Use the project's canonical Beads store. Both roles select and verify that store from their workspaces according to the project instructions. Reuse matching beads when they exist. The Lead tracks the approved goal as an epic and each batch as a child task, with dependencies for actual blockers.
 
 | Record | Writer |
 | --- | --- |
-| Shared backlog, current focus, owner-review queue, shared decisions/go-live list | Lead only; record owner decisions, never invent them |
-| Batch brief | Planning/Lead; freeze at handoff, agree changes with Conductor |
-| Batch status, decision requests and closeout | Assigned Conductor only while executing |
+| Goal epic, batch plan and record of owner decisions | Lead |
+| Batch brief and acceptance criteria | Lead; agree changes with the Conductor after dispatch |
+| Batch progress, blockers, decision requests and review evidence | Assigned Conductor during execution |
+| Batch integration, combined checks and closure | Lead after the handoff, or Conductor when authorized to integrate in a manual session |
 
-Conductors report through peer messaging; they never edit the shared backlog, even if stale or the Lead is offline. The Lead updates it at integration. Avoid simultaneous edits to different sections of one file: coordinate a write handoff when a brief must change.
+Pass the exact batch bead ID and store selection in the startup prompt. The Conductor reads the brief and claims that assigned bead before starting. If a claim fails, stop and check ownership. Follow the project's actor and guard rules for changes to active work. For manual entry without a Lead, agree the brief, batch bead and integration destination with the owner.
 
-A batch record needs these slots (adapt headings to the project):
+Keep this information on the batch bead. Link a longer Markdown brief when needed.
 
-- **Brief:** outcome; scope/exclusions; dependencies, including external access; defaults/assumptions; escalation triggers and owner-reserved decisions; done criteria and verification commands.
-- **Assignment:** task owner/session and report target; repository/base change; batch size (small/large) with reason and the resulting Conductor model; workspace creator, name/path and agent- versus user-managed status; child fanout authority and edit boundaries.
-- **Status:** active/blocked/review-ready/integrated, next action, owned children/workspaces and their disposition.
-- **Closeout:** delivered result/change IDs; independent review and checks; limitations, artifacts retained and cleanup; outstanding decisions with a recommendation.
+- **Brief** records the outcome, scope, dependencies, assumptions, escalation triggers, owner-reserved decisions, acceptance criteria and verification commands.
+- **Assignment** identifies the owner session, report target, repository and base change. Record the batch size and reason, selected model, workspace name, path and creator, child fanout authority and edit boundaries.
+- **Progress** records the current blocker or next action and the state of owned children and workspaces.
+- **Closeout** records the delivered change IDs, independent review, checks, limitations, retained artifacts, cleanup and any pending decisions with a recommendation.
 
-Keep records concise and durable, not transcripts. Unknowns may become explicit assumptions only within the brief's authority; unresolved release decisions stay on the owner-review/go-live list. Implementation done is not permission to go live.
+When the batch passes independent review and its checks, the Conductor records the evidence, pauses batch edits and hands the bead back to the Lead. Append the evidence and reassign the bead to the Lead's Beads actor in one update guarded by the Conductor's actor and `in_progress` status. Keep the bead `in_progress`. Use peer messaging when an answer or intervention is needed. Routine progress and readiness are recorded in Beads.
+
+The Lead checks for batches handed back under the active epic after dispatch, between coordination steps and when resuming. With the project store selected, query `bd list --parent <epic-id> --status in_progress --assignee <lead-actor> --limit 0`. While actively waiting for batches, check again after a short interval. An idle session sees the change on its next check.
+
+The Lead reads the bead and verifies the evidence before integrating. Run checks on the combined result and record the outcome before closing the batch. If it needs more work, agree the return handoff before reassigning. With no Lead, a Conductor authorized to integrate into the agreed destination performs these checks and closes the bead. If the owner is integrating, record readiness and agree the handoff with the owner. Release decisions stay with the owner.
 
 ## Delegation envelope
 
-Every child starts cold: supply objective, exact cwd/base reference, role/skill location, brief reference, edit boundaries, child fanout authority, checks/review, escalation triggers, report target and workspace lifecycle owner. Reference the brief rather than pasting the whole plan. Set model/reasoning from explicit choice or applicable policy and verify the effective selection; loading a skill never sets them.
+For a Conductor, put the brief, exact cwd and base, edit boundaries, child fanout authority, checks, escalation triggers, Lead session and Beads actor, and workspace lifecycle owner on the batch bead. Start the peer with an explicit instruction to read the role skill, select the project store and work on the exact bead ID. Verify startup through the pane and the matching claim in Beads. For workers and reviewers, supply the relevant assignment and brief reference directly. Set model and reasoning from explicit choice or applicable policy and verify the effective selection.
 
 Use visible interactive Zellij peers for Conductors and bounded subagents for workers/reviewers. Separate concurrent writers into repository-native workspaces, preferably jj; read-only tasks need no new workspace. Parallelize only independent work; one writer per cwd. Do not invent a conductor count. Model tiers: Lead is owner-chosen; Conductor is the task-owner tier, sized small or large per batch; workers and reviewers are the bounded tier. Map tiers to models through the applicable machine policy.
 
@@ -67,8 +72,8 @@ Lead and Conductor in one delivery use the same harness. The contract is identic
 
 Read the named skill when performing its operation; do not load every dependency upfront:
 
-- `delegating-independent-work`: isolation, naming, durable handoff and recovery; retain this contract's creator lifecycle ownership and standing integration authority.
+- `delegating-independent-work`: isolation, naming, handoff and recovery. Use the Beads records and workspace lifecycle in this contract.
 - `launching-visible-agents` (both harnesses) and, in Pi, `pi-intercom`: shell-first visible launch, exact session readiness and two-way communication; it uses `using-zellij` for pane and tab mechanics. If unavailable, report the failed check and ask before choosing another surface.
 - `pi-subagents` (Pi) or the `Agent` tool (Claude Code): bounded worker/reviewer launch, supervisor escalation and fresh review. Follow applicable model/retry policy. Missing launch dependencies block the affected dispatch, not planning.
 - `jujutsu` (upstream skill): inspect state, atomic changes and safe jj mechanics, with this contract's scoped integration exception.
-- `project-structure`: existing backlog and document conventions; do not restructure a project merely to enter a role.
+- `project-structure`: conventions for supporting documents. Keep task status in Beads.

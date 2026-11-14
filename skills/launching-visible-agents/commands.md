@@ -41,6 +41,8 @@ For PowerShell, a quoted executable path needs the call operator `&`; Nushell us
 
 ## Inspect startup and message after registration
 
+For a role using the Beads dispatch procedure, replace the readiness prompt in the launcher command with the role instructions, exact bead ID and store selection. After launch, inspect the pane and matching claim as described in the skill. The ping and task messages below apply to message-based dispatch.
+
 ```bash
 zellij action dump-screen --pane-id terminal_123
 ```

@@ -66,6 +66,7 @@ Do not create empty folders or empty companion files. This map does not authoriz
 - Prefer Zensical as the reader surface when adopting a documentation site. Markdown-only documentation remains sufficient for small projects; common conventions do not require installing site tooling.
 - Build directly from maintained `docs/` sources so live preview sees edits. Avoid disposable staging copies.
 - Keep generated output separate, normally in ignored `site/`.
+- Apply the owner's default Zensical look from [templates/zensical](templates/zensical/README.md): clear headings, a bold section menu, a wide page and buttons that hide the side panels. Do not ask the owner to describe it again.
 - Use the existing `docs/index.md` reader hub as the site entry. Site navigation can group pages independently of their folders.
 - Keep published images, JavaScript, styles and chart data inside the site source tree. Report-building machinery and private inputs stay outside it.
 - Document build and live-preview commands in the README. A site rebuild does not itself rerun report calculations; document report regeneration separately when needed.

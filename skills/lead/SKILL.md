@@ -11,9 +11,9 @@ Own the overall goal and coordination, not batch implementation. Enter in the cu
 
 ## Enter and plan
 
-- Briefly confirm Lead, the objective, repository and current owned work. Read project instructions, current scope/backlog and applicable memory. Preserve earlier decisions; ask only for missing information that changes execution.
+- Briefly confirm Lead, the objective, repository and current owned work. Read project instructions, relevant beads and applicable memory. Preserve earlier decisions; ask only for missing information that changes execution.
 - If no delivery objective exists, ask for it. If the owner requests planning only, plan without launching. Otherwise approved delivery scope includes delegation through Conductors and the shared contract's routine integration/cleanup authority.
-- Agree outcomes, separable batches, dependencies and owner-reserved decisions. Write the brief slots from the contract. Surface access/environment bottlenecks early; build on explicit permitted assumptions and keep release decisions separate.
+- Agree outcomes, separable batches, dependencies and owner-reserved decisions. Record the goal and batch briefs in Beads using the shared contract. Surface access/environment bottlenecks early.
 
 ## Dispatch and coordinate
 
@@ -21,11 +21,11 @@ Own the overall goal and coordination, not batch implementation. Enter in the cu
 - Size each batch as small or large before launch and choose the Conductor model from the applicable model policy for that size. Record the size and a one-line reason in the batch assignment and continue; the owner may override.
 - The owner starts and chooses the model for a top-level Lead. For an unusually large area, you may propose a child Lead that coordinates its own batches; launch it only with owner approval, and ask for its model if the owner has not given one.
 - Resolve the installed `conductor` skill location from skill discovery or this bundle's sibling directory. Include an explicit instruction to read its `SKILL.md` and required shared contract before task execution. A plain mention of “conductor” is not reliable skill loading; do not assume slash text passed as a CLI prompt is executed as a command.
-- Send the contract's delegation envelope and brief. Verify exact peer identity, cwd, effective model/reasoning and two-way readiness before handing over edits. Report its visible tab/session to the owner.
-- Answer within-brief escalations; bring reserved decisions, semantic ambiguities and scope changes to the owner, one at a time with a recommendation. Keep the shared backlog and owner-review queue accurate.
+- Put the assignment on the batch bead and give its exact ID and store selection in the startup prompt. Use the launcher’s Beads dispatch procedure to verify the peer and claim. Report its visible tab and session to the owner.
+- Answer within-brief escalations. Bring reserved decisions, semantic ambiguities and scope changes to the owner, one at a time with a recommendation. Keep the goal epic current.
 
 ## Accept and finish
 
-Verify independent review and completion evidence; integrate each owned child into your current line, check the combined result, preserve artifacts and clean up using the shared lifecycle. Do not ask again for ordinary integration permission. Report delivered work, checks, limits and remaining decisions concisely.
+Check the active epic for batches handed back to your Beads actor. Verify independent review and completion evidence. Integrate each owned child into your current line, check the combined result, preserve artifacts and clean up using the shared lifecycle. Record integration in Beads and close the batch after verification. Do not ask again for ordinary integration permission. Report delivered work, checks, limits and remaining decisions concisely.
 
 **Common traps:** making a “tiny” batch implementation fix yourself; dispatching without loading the role; treating green child tests as green integration. Delegate implementation fixes to the Conductor; integration conflict mechanics remain your coordination work.
