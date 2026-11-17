@@ -65,6 +65,39 @@ class DeliveryRolePackagingTests(unittest.TestCase):
         self.assertIn("Conductor integrates `b3-parser` into `b3`", contract)
         self.assertIn("Lead integrates `b3` into the Lead's line", contract)
 
+    def test_cleanup_covers_tabs_registration_and_folder(self) -> None:
+        contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
+        for action in (
+            "Before closing the batch",
+            "preserve the handoff",
+            "stop the child session",
+            "close its recorded agent-owned tab",
+            "jj workspace forget <name>",
+            "delete the temporary workspace folder",
+            "Verify the tab, workspace registration and folder are gone",
+            "Keep user-managed resources",
+            "user requests to retain",
+            "next responsible owner",
+        ):
+            self.assertIn(action, contract)
+        stale_rules = (
+            "Keep successful interactive peer conversations open",
+            "Keep the conversation available to the owner",
+            "Keep independent visible sessions open for the user",
+            "Leave successful peers open for the user",
+            "Close only explicitly disposable test tabs",
+        )
+        for relative in (
+            "lead/workflow.md",
+            "conductor/SKILL.md",
+            "delegating-independent-work/SKILL.md",
+            "launching-visible-agents/SKILL.md",
+        ):
+            content = (SKILLS / relative).read_text(encoding="utf-8")
+            for rule in stale_rules:
+                with self.subTest(path=relative, rule=rule):
+                    self.assertNotIn(rule, content)
+
     def test_manual_execution_workspace_names_its_integration_destination(self) -> None:
         contract = (SKILLS / "lead/workflow.md").read_text(encoding="utf-8")
         self.assertIn("Manual execution workspace", contract)

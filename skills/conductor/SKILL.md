@@ -28,6 +28,6 @@ Own one batch's execution through bounded workers and independent reviewers. The
 
 Independently reviewed child work is yours to integrate into your assigned batch workspace, even when the Lead created that workspace, without repeated approval. Verify the combined result, preserve artifacts and clean up your own children using the shared lifecycle.
 
-Record change IDs, review and check evidence, limits, artifacts and outstanding decisions on the bead. If the Lead is integrating, pause edits and reassign the bead to the Lead as described in the shared contract. The Lead integrates and cleans up a Lead-created entry workspace. A user-created entry workspace stays user-managed. For a self-created manual execution workspace, you own reviewed integration into the agreed destination and safe cleanup. Keep the conversation available to the owner.
+Record change IDs, review and check evidence, limits, artifacts and outstanding decisions on the bead. If the Lead is integrating, pause edits and reassign the bead to the Lead as described in the shared contract. The Lead integrates and cleans up a Lead-created entry workspace. A user-created entry workspace stays user-managed. For a self-created manual execution workspace, you own reviewed integration into the agreed destination and safe cleanup.
 
 **Common traps:** treating self-review as independent review, editing the goal epic for the Lead, closing a batch before integration, or deleting an entry workspace owned by someone else.

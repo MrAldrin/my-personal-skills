@@ -26,7 +26,7 @@ Pass the exact batch bead ID and store selection in the startup prompt. The Cond
 Keep this information on the batch bead. Link a longer Markdown brief when needed.
 
 - **Brief** records the outcome, scope, dependencies, assumptions, escalation triggers, owner-reserved decisions, acceptance criteria and verification commands.
-- **Assignment** identifies the owner session, report target, repository and base change. Record the batch size and reason, selected model, workspace name, path and creator, child fanout authority and edit boundaries.
+- **Assignment** identifies the owner session, report target, repository and base change. Record the batch size and reason, selected model, workspace name, path and creator, Zellij session/tab/pane IDs, child fanout authority and edit boundaries.
 - **Progress** records the current blocker or next action and the state of owned children and workspaces.
 - **Closeout** records the delivered change IDs, independent review, checks, limitations, retained artifacts, cleanup and any pending decisions with a recommendation.
 
@@ -34,7 +34,7 @@ When the batch passes independent review and its checks, the Conductor records t
 
 The Lead checks for batches handed back under the active epic after dispatch, between coordination steps and when resuming. With the project store selected, query `bd list --parent <epic-id> --status in_progress --assignee <lead-actor> --limit 0`. While actively waiting for batches, check again after a short interval. An idle session sees the change on its next check.
 
-The Lead reads the bead and verifies the evidence before integrating. Run checks on the combined result and record the outcome before closing the batch. If it needs more work, agree the return handoff before reassigning. With no Lead, a Conductor authorized to integrate into the agreed destination performs these checks and closes the bead. If the owner is integrating, record readiness and agree the handoff with the owner. Release decisions stay with the owner.
+The Lead reads the bead and verifies the evidence before integrating. Run checks on the combined result and finish cleanup before closing the batch. If it needs more work, agree the return handoff before reassigning. With no Lead, a Conductor authorized to integrate into the agreed destination performs these checks and closes the bead. If the owner is integrating, record readiness and agree the handoff with the owner. Release decisions stay with the owner.
 
 ## Delegation envelope
 
@@ -55,7 +55,7 @@ Example: the Lead creates workspace `b3` (folder `<repo-folder>-b3`) as the Cond
 3. Integrate the child's reviewed changes into the creator's current line using the existing jj workflow. Resolve mechanical integration issues; escalate semantic ambiguity or scope changes. Preserve unrelated work and keep bookmarks/pushes under owner control.
 4. Run relevant checks on the combined state; update the result and status. Child checks alone do not prove integration passed.
 5. Before removal, verify integrated work remains reachable, no active writer/child still needs the workspace, and needed ignored/untracked artifacts are relocated and usable. Validate path-dependent artifacts, not just file copies. Retain the workspace and report a blocker if preservation is unsafe.
-6. Briefly explain cleanup impact, then use repository-native removal only for confirmed agent-owned resources. Record disposition. Keep successful interactive peer conversations open; workspace removal is not permission to close a tab or kill its session. If the peer still needs that cwd, arrange its safe release first.
+6. Before closing the batch, the creator must preserve the handoff, briefly explain cleanup impact, stop the child session, close its recorded agent-owned tab, run `jj workspace forget <name>`, and delete the temporary workspace folder. Verify the tab, workspace registration and folder are gone. Keep user-managed resources and anything the user requests to retain. If cleanup is blocked, record the reason and next responsible owner.
 
 ## Harness mechanics
 

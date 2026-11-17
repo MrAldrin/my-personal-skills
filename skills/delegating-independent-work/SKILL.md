@@ -21,7 +21,7 @@ Keep small, bounded tasks with the parent and its subagents. Give large independ
 - Give concurrent editing agents separate repository-native workspaces, preferably jj. Read-only agents need no mandatory workspace.
 - Name an agent-managed jj workspace `<task>`: a short lowercase hyphenated task descriptor, without a random suffix. Create its folder as a sibling of the main checkout named `<repo-folder>-<task>`. A child workspace extends its parent's task, such as `<task>-parser`. On collision, inspect the existing task and ownership before choosing whether to resume, coordinate, or use a distinct task descriptor.
 - Record ownership before handing over work. Treat the name as a visual cue; use the durable record as cleanup authority. Leave user-managed workspaces under user management.
-- Use `launching-visible-agents` for a requested Zellij peer's launch and readiness verification, and its harness's messaging (`pi-intercom` in Pi, `SendMessage` in Claude Code). Hand over the task, workspace, authority, and durable record location. Keep successful interactive peers available to the user.
+- Use `launching-visible-agents` for a requested Zellij peer's launch and readiness verification, and its harness's messaging (`pi-intercom` in Pi, `SendMessage` in Claude Code). Hand over the task, workspace, authority, and durable record location.
 
 ## Keep a recoverable record
 
@@ -35,4 +35,4 @@ Update it at ownership changes, meaningful checkpoints, and closeout. Retain the
 
 ## Finish and clean up
 
-Preserve review-ready results, stable change IDs, checks, and a usable handoff before cleanup. Verify results remain reachable without the temporary workspace. Resolve active children and use repository-native removal only for confirmed agent-owned resources whose work is preserved. Record what was retained or removed. Keep independent visible sessions open for the user; workspace cleanup and closing a conversation are separate decisions.
+Preserve review-ready results, stable change IDs, checks, and a usable handoff before cleanup. Verify results remain reachable without the temporary workspace. Resolve active children. For confirmed agent-owned jj workspaces, run `jj workspace forget <name>` and delete the folder; verify both are gone. Keep peers open while work or handoff is pending. After acceptance, the lifecycle owner closes agent-created sessions and tabs unless the user requests retention. Record removals or blockers and the next responsible owner.

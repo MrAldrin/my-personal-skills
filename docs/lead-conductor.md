@@ -32,7 +32,7 @@ These are skills, not new pi-subagents agent definitions or slash-command extens
 
 Routine integration and cleanup are part of the role's standing authority for this delegated work, not repeated permission requests. The Lead owns Conductor workspaces; Conductors own their own children's workspaces. This is a scoped exception to generic delegation/VCS approval and cleanup-ownership defaults, not a change to those skills globally.
 
-Fresh independent review and required checks precede acceptance. Relevant checks also run on the combined state after integration. Needed ignored/untracked artifacts must remain usable after relocation. If safe cleanup is blocked, retain the workspace and report why. Interactive peers remain available to you.
+Fresh independent review and required checks precede acceptance. Relevant checks also run on the combined state after integration. Needed ignored/untracked artifacts must remain usable after relocation. If safe cleanup is blocked, retain the workspace and report why. Before batch closure, the creator stops its child session, closes its agent-owned tab, forgets the jj workspace and deletes its folder, then verifies removal. User-managed resources and anything you request to retain stay.
 
 Pushes, bookmark moves, releases, unrelated work and explicit project restrictions do not become authorized by entering a role.
 

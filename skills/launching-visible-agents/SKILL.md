@@ -28,7 +28,7 @@ For independent task ownership, workspace naming, durable status, handoff, and c
 - Ping first: ask the peer to report its session ID, effective model/reasoning, cwd and Zellij session/pane variables through intercom, then wait. Select model/reasoning from the explicit request or applicable environment policy, and verify the effective selection. Inspect failed startup before retrying; avoid duplicate peers.
 - Refresh intercom `list`. Target the exact peer session, not cwd alone when multiple sessions share it. Intercom session IDs and Zellij tab/pane IDs are different namespaces. A missing Herdr location does not invalidate a Zellij peer.
 - Verify a two-way ping, using pi-intercom's messaging rules.
-- Then send the task, constraints, isolation details, expected report, and permission boundaries for edits/subagent fanout. Leave the peer interactive afterward. Report its tab name and session identity so the user can take over.
+- Then send the task, constraints, isolation details, expected report, and permission boundaries for edits/subagent fanout. Keep the peer interactive while work or handoff is pending. Report its tab name and session identity so the user can take over.
 
 ### Dispatch through Beads
 
@@ -38,10 +38,10 @@ For a role that defines a Beads handoff, put the exact bead ID and store selecti
 
 When validating a new launch route, obtain approval for one disposable test tab. Verify Pi starts inside its normal shell, exit only that disposable Pi, and confirm the shell prompt can run a harmless marker command. Then exit that disposable shell and verify its pane closes normally. Target the recorded stable pane throughout; never test exit on a live user peer. Record the tested platform and limitations; native Windows results do not establish Linux/WSL behavior.
 
-Leave successful peers open for the user. Persistence requires a running Pi process and Zellij session; after restart refresh both rosters.
+After acceptance, the lifecycle owner closes agent-created sessions and tabs unless the user requests retention. After restart refresh both rosters.
 
 ## Failure handling
 
 `HERDR_UNAVAILABLE` proves only that the Herdr helper failed. Check Zellij and the local launcher before declaring visible delegation blocked. If Zellij itself is unavailable, report the exact check and ask before choosing a different surface.
 
-On startup delay, inspect the pane and roster before retrying. Do not send keystrokes to whichever pane happens to be focused. Close only explicitly disposable test tabs with authorization and a verified stable ID.
+On startup delay, inspect the pane and roster before retrying. Do not send keystrokes to whichever pane happens to be focused. Close only verified agent-owned tabs whose work and handoff are preserved; target their recorded stable IDs.
