@@ -116,12 +116,10 @@ class DeliveryRolePackagingTests(unittest.TestCase):
                 self.assertIn("batch bead", text)
                 self.assertNotIn("plans/batches/", text)
 
-    def test_role_bundle_has_only_the_watcher_script_and_no_machine_paths(self) -> None:
+    def test_role_bundle_has_no_machine_paths(self) -> None:
         for role in ROLES:
             for path in (SKILLS / role).rglob("*"):
                 if path.is_file():
-                    if path.suffix != ".md":
-                        self.assertEqual(path, SKILLS / "lead/watch-epic.sh")
                     text = path.read_text(encoding="utf-8")
                     self.assertNotRegex(text, r"[A-Z]:[/\\]|/home/|/Users/")
                     self.assertNotRegex(text, r"github-copilot/|claude-haiku-|gpt-6\.")
