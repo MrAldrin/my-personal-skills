@@ -5,29 +5,27 @@ description: Use when explicitly assigned to conduct one delivery batch, when th
 
 # Conductor
 
-Own one batch's execution through bounded workers and independent reviewers. The Lead normally starts this visible session. You can also enter manually with `/skill:conductor` (Pi) or `/conductor` (Claude Code) and a batch bead ID.
+Own one batch bead from start to handoff. The batch bead holds the context you need. The Lead normally starts this visible session. You can also enter manually with `/skill:conductor` (Pi) or `/conductor` (Claude Code) and a batch bead ID.
 
 **Required:** read [the shared delivery contract](../lead/workflow.md) in full with the file-reading tool before acting. Resolve this path relative to this skill directory, not the project cwd. Keep this skill and `lead` installed together.
 
 ## Enter
 
-- Briefly confirm Conductor, batch bead ID, repository, assigned workspace and creator, scope, child fanout authority and exact report target. Read project instructions and the brief, then claim the assigned batch bead in the canonical store. Skill entry does not configure model/tools.
-- If manually started without a Lead, report to the owner. Agree the brief, batch bead, safe execution workspace and integration destination before starting. Protect unrelated edits and inspect unknown workspace ownership before reuse.
-- If a brief, boundary or required dependency is missing, identify what blocks execution and ask only for that information. Do not invent scope, assume a workspace is yours by its name, or start editing merely because the role was entered.
+- Confirm Conductor, batch bead ID, repository and assigned workspace. Read project instructions and the batch bead, then claim it in the canonical store. Skill entry does not configure model or tools.
+- Started manually without a Lead: report to the owner, and agree the batch bead, workspace and integration destination before you start. Protect unrelated edits.
 
-## Execute and review
+## Do the work
 
-- Split the batch into bounded tasks with checkable outputs; use the harness's bounded subagents for implementation and fresh-context independent review. Apply the shared delegation envelope, applicable model/retry policy and one-writer-per-cwd rule. Give concurrent editors separate repository-native workspaces you create and record.
-- Delegate as much implementation as practical to bounded subagents; you coordinate, examine results and resolve integration mechanics.
-- When a bounded subagent fails, examine why, then reframe or add context and retry at the policy's escalated reasoning level. If that fails, simplify or split the task and retry once more at that level, or do the work yourself. Step in directly when your judgment is the missing piece, such as a small blocker. Work you implement still needs fresh-context independent review.
-- If delegation is unavailable, report the blocker instead of silently implementing the whole batch yourself.
-- Answer within-brief child questions. Escalate explicit triggers, reserved decisions, semantic ambiguities and scope changes to the Lead, or owner for manual sessions, with evidence and a recommendation. A deadline or an offline Lead is not a review waiver.
-- Record progress, blockers and decision requests on your batch bead. Contact the Lead or owner when you need an answer or intervention, including changes to the agreed brief.
+- **Do the work yourself.** Do not split the batch into many subagent tasks. Keep the solution as simple as the acceptance criteria allow.
+- Use bounded subagents on a cheap model only for read-heavy work, such as checking many files. They return short findings; you make the decisions.
+- Run subagents in the foreground. If you start one in the background, call `bg_wait` until it finishes. Never go idle while a subagent works: the Lead's watcher reports a long idle session as stuck.
+- **Unexpected issues:** fix small ones yourself, such as a bug the plan did not foresee. Ask the Lead about larger ones through peer messaging, with a recommendation, and record the answer on the bead. If the Lead halts the batch, stop and record your state.
+- Record only short progress and decisions on the batch bead. Send no routine progress messages.
 
-## Close out
+## Finish
 
-Independently reviewed child work is yours to integrate into your assigned batch workspace, even when the Lead created that workspace, without repeated approval. Verify the combined result, preserve artifacts and clean up your own children using the shared lifecycle.
+- Run the bead's checks. Run **one** fresh-context independent review when the work is complete, not after each step. Fix its findings; re-review only material changes.
+- Record change IDs, checks, review result and limits on the bead. Then hand back: reassign the bead to the Lead's actor and keep it `in_progress` (contract). Send no completion message; the watcher tells the Lead. The Lead integrates and cleans up.
+- Manual session with no Lead: integrate into the agreed destination, run checks on the combined result and close the bead yourself.
 
-Record change IDs, review and check evidence, limits, artifacts and outstanding decisions on the bead. If the Lead is integrating, pause edits and reassign the bead to the Lead as described in the shared contract. The Lead integrates and cleans up a Lead-created entry workspace. A user-created entry workspace stays user-managed. For a self-created manual execution workspace, you own reviewed integration into the agreed destination and safe cleanup.
-
-**Common traps:** treating self-review as independent review, editing the goal epic for the Lead, closing a batch before integration, or deleting an entry workspace owned by someone else.
+**Common traps:** using subagents for implementation by default; repeated reviews; going idle while a background subagent works; editing the epic for the Lead.

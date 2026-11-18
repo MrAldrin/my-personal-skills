@@ -8,9 +8,9 @@ After updating this skill bundle, run `/reload` in Pi. In an ordinary project co
 /skill:lead
 ```
 
-Then discuss the goal and approve the delivery scope. “Act as lead” also triggers the skill; explicit invocation is more reliable. If you only want planning, say so. Role entry alone does not start unspecified work.
+Plan first, in an ordinary session: write the epic, its child batch beads, dependencies, acceptance criteria, checks and a model for each bead. Then start the Lead with the epic ID. The Lead does not plan with you; it runs the epic and reports at the end: done, done with decisions, or halted. Role entry alone does not start unspecified work.
 
-The Lead normally creates a jj workspace and launches a visible Conductor in Zellij with the role instructions and batch bead ID. The Conductor reads the assignment and claims the batch directly in Beads.
+The Lead runs up to 3 Conductors at the same time, each in its own jj workspace and visible Zellij tab, named after its batch bead ID. A watcher script wakes the Lead through pi-intercom only when a batch bead changes or a Conductor is idle too long.
 
 For manual entry in a suitable project session:
 
@@ -26,8 +26,8 @@ These are skills, not new pi-subagents agent definitions or slash-command extens
 
 | Role | Owns |
 | --- | --- |
-| Lead | Goal epic, batch briefs, Conductor dispatch, escalations, integration and batch closure |
-| Conductor | One assigned batch bead during execution, bounded workers and reviewers, progress and review evidence |
+| Lead | Running the planned epic: Conductor dispatch, decisions, small changes to unstarted beads, integration, cleanup, final review and report |
+| Conductor | One assigned batch bead: does the work itself, one review, progress and review evidence |
 | Creator of a child workspace | That child's workspace creation, reviewed integration into its own line, artifact preservation and cleanup |
 
 Routine integration and cleanup are part of the role's standing authority for this delegated work, not repeated permission requests. The Lead owns Conductor workspaces; Conductors own their own children's workspaces. This is a scoped exception to generic delegation/VCS approval and cleanup-ownership defaults, not a change to those skills globally.
@@ -50,11 +50,11 @@ Existing local skills provide mechanics:
 
 The runtime also needs Pi with `pi-intercom`, `pi-subagents`, Zellij, and jj for this intended setup. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
 
-No launcher, hooks, background scheduler, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
+The only script is the Lead's watcher, [watch-epic.sh](../skills/lead/watch-epic.sh); it needs `bd`, `jq` and `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
 
 ## Records
 
-Use one Beads epic per goal and one child bead per batch in the project's canonical store. A bead can link to a longer Markdown brief. The Conductor records the reviewed result and reassigns the bead to the Lead. The Lead picks up those batches during coordination or when resuming, then closes them after integration and combined checks. Use peer messaging for questions, blockers or decisions that need a response.
+Use one Beads epic per goal and one child bead per batch in the project's canonical store. A bead can link to a longer Markdown brief. The Conductor records the reviewed result and reassigns the bead to the Lead. The watcher tells the Lead, which closes the batch after integration and combined checks. Use peer messaging only for questions the bead cannot answer.
 
 ## Evidence and limits
 
