@@ -8,7 +8,7 @@ After updating this skill bundle, run `/reload` in Pi. In an ordinary project co
 /skill:lead
 ```
 
-Plan first, in an ordinary session: write the epic, its child batch beads, dependencies, acceptance criteria, checks and a model for each bead. Then start the Lead with the epic ID. The Lead does not plan with you; it runs the epic and reports at the end: done, done with decisions, or halted. Role entry alone does not start unspecified work.
+Plan first, in an ordinary session: write the goal bead (an epic or any task), its child batch beads, dependencies, acceptance criteria, checks and a model for each bead. Then start the Lead with the goal bead ID. The Lead does not plan with you; it runs the work and reports at the end: done, done with decisions, or halted. Role entry alone does not start unspecified work.
 
 The Lead runs up to 3 Conductors at the same time, each in its own jj workspace and visible Zellij tab, named after its batch bead ID. A watcher script wakes the Lead through pi-intercom only when a batch bead changes or a Conductor is idle too long.
 
@@ -26,7 +26,7 @@ These are skills, not new pi-subagents agent definitions or slash-command extens
 
 | Role | Owns |
 | --- | --- |
-| Lead | Running the planned epic: Conductor dispatch, decisions, small changes to unstarted beads, integration, cleanup, final review and report |
+| Lead | Running the planned goal: Conductor dispatch, decisions, small changes to unstarted beads, integration, cleanup, final review and report |
 | Conductor | One assigned batch bead: does the work itself, one review, progress and review evidence |
 | Creator of a child workspace | That child's workspace creation, reviewed integration into its own line, artifact preservation and cleanup |
 
@@ -50,11 +50,11 @@ Existing local skills provide mechanics:
 
 The runtime also needs Pi with `pi-intercom`, `pi-subagents`, Zellij, and jj for this intended setup. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
 
-The only script is the Lead's watcher, [watch-epic.sh](../skills/lead/watch-epic.sh); it needs `bd`, `jq` and `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
+The only script is the Lead's watcher, [watch-goal.sh](../skills/lead/watch-goal.sh); it needs `bd`, `jq` and `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
 
 ## Records
 
-Use one Beads epic per goal and one child bead per batch in the project's canonical store. A bead can link to a longer Markdown brief. The Conductor records the reviewed result and reassigns the bead to the Lead. The watcher tells the Lead, which closes the batch after integration and combined checks. Use peer messaging only for questions the bead cannot answer.
+Use one goal bead (any type) per goal and one child bead per batch in the project's canonical store. A bead can link to a longer Markdown brief. The Conductor records the reviewed result and reassigns the bead to the Lead. The watcher tells the Lead, which closes the batch after integration and combined checks. Use peer messaging only for questions the bead cannot answer.
 
 ## Evidence and limits
 

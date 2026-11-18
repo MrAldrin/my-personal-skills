@@ -10,12 +10,12 @@ For work delegated under this workflow, the creator has standing authority to cr
 
 ## Records
 
-The project's canonical Beads store holds all state. Select and verify it from every workspace according to the project instructions. The epic is the goal; each child batch bead is one Conductor's work, with dependencies for real blockers.
+The project's canonical Beads store holds all state. Select and verify it from every workspace according to the project instructions. The goal bead is the parent the Lead receives: an epic or any bead with child beads, whatever its type; each child batch bead is one Conductor's work, with dependencies for real blockers.
 
 | Record | Writer |
 | --- | --- |
-| Epic, plan, model per batch bead | Owner and planner, before the Lead starts |
-| Epic state, Lead decisions, small changes to unstarted batch beads, integration and closure | Lead |
+| Goal bead, plan, model per batch bead | Owner and planner, before the Lead starts |
+| Goal state, Lead decisions, small changes to unstarted batch beads, integration and closure | Lead |
 | Batch progress, decisions, blockers and review evidence | Assigned Conductor |
 
 Write short, current notes. The bead is the handoff; do not repeat its content in messages.
@@ -28,13 +28,13 @@ Write short, current notes. The bead is the handoff; do not repeat its content i
 
 ## Watcher
 
-The Lead does not poll. At epic start it runs [watch-epic.sh](watch-epic.sh) in a floating pane in its own tab (`using-zellij`), with the epic ID, the Lead's intercom name and the Beads store. Every 3 minutes the script reads the epic's child beads and `pi-intercom list --json`. It sends the Lead one short `pi-intercom send` line only when:
+The Lead does not poll. At goal start it runs [watch-goal.sh](watch-goal.sh) in a floating pane in its own tab (`using-zellij`), with the goal bead ID, the Lead's intercom name and the Beads store. Every 3 minutes the script reads the goal bead's child beads and `pi-intercom list --json`. It sends the Lead one short `pi-intercom send` line only when:
 
 - a batch bead's status, assignee or `human` label changed;
 - a signal (handed back, `blocked`, `human`) is still present after two more checks: one reminder;
 - a Conductor is `idle` for more than 15 minutes while its bead is still `in_progress` under it.
 
-The Lead stops the watcher pane at epic end. Fallback when the watcher cannot run: each Conductor sends one `done <id>` or `blocked <id>` message.
+The Lead stops the watcher pane at goal end. Fallback when the watcher cannot run: each Conductor sends one `done <id>` or `blocked <id>` message.
 
 ## Delegation envelope
 
@@ -67,7 +67,7 @@ Lead and Conductor in one delivery use the same harness.
 | Bounded helper or reviewer | `pi-subagents` (foreground, or `bg_wait`) | `Agent` tool with explicit `model`/`effort`; never `isolation: "worktree"` |
 | Visible Conductor | Pi in a Zellij tab | `claude` in a Zellij tab |
 | Peer messaging | `pi-intercom` | `ListAgents` and `SendMessage` |
-| Watcher wake | `watch-epic.sh` with `pi-intercom send` | `Monitor` running the same checks |
+| Watcher wake | `watch-goal.sh` with `pi-intercom send` | `Monitor` running the same checks |
 
 ## Reuse mechanics on demand
 

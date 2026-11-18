@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# Wake the Lead through pi-intercom only when an epic's batch beads change.
-# Usage: watch-epic.sh <epic-id> <lead-intercom-name> <beads-dir>
+# Wake the Lead through pi-intercom only when a goal bead's batch beads change.
+# Usage: watch-goal.sh <goal-id> <lead-intercom-name> <beads-dir>
 # Conductor sessions must be named after their batch bead ID.
 # Env: WATCH_INTERVAL (s, default 180), IDLE_LIMIT (s, default 900),
 #      PI_INTERCOM (command, default: pi-intercom on PATH, else the Pi npm package).
 set -u
-epic=${1:?epic id}; lead=${2:?lead intercom name}; store=${3:?beads dir}
+goal=${1:?goal bead id}; lead=${2:?lead intercom name}; store=${3:?beads dir}
 interval=${WATCH_INTERVAL:-180}; idle_limit=${IDLE_LIMIT:-900}
 if [ -n "${PI_INTERCOM:-}" ]; then ic=$PI_INTERCOM
 elif command -v pi-intercom >/dev/null; then ic=pi-intercom
 else ic="node $HOME/.pi/agent/npm/node_modules/pi-intercom/cli.mjs"; fi
 
 declare -A last seen_count idle_since
-send() { $ic send --to "$lead" --text "watch $epic: $1" >/dev/null 2>&1 || echo "send failed: $1" >&2; }
+send() { $ic send --to "$lead" --text "watch $goal: $1" >/dev/null 2>&1 || echo "send failed: $1" >&2; }
 
 while :; do
-  beads=$(BEADS_DIR=$store bd --readonly list --parent "$epic" --all --limit 0 --json 2>/dev/null) || { echo "bd list failed" >&2; sleep "$interval"; continue; }
+  beads=$(BEADS_DIR=$store bd --readonly list --parent "$goal" --all --limit 0 --json 2>/dev/null) || { echo "bd list failed" >&2; sleep "$interval"; continue; }
   sessions=$($ic list --json 2>/dev/null || echo '{}')
   now=$(date +%s); msgs=()
 

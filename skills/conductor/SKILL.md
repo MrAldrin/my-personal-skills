@@ -28,4 +28,4 @@ Own one batch bead from start to handoff. The batch bead holds the context you n
 - Record change IDs, checks, review result and limits on the bead. Then hand back: reassign the bead to the Lead's actor and keep it `in_progress` (contract). Send no completion message; the watcher tells the Lead. The Lead integrates and cleans up.
 - Manual session with no Lead: integrate into the agreed destination, run checks on the combined result and close the bead yourself.
 
-**Common traps:** using subagents for implementation by default; repeated reviews; going idle while a background subagent works; editing the epic for the Lead.
+**Common traps:** using subagents for implementation by default; repeated reviews; going idle while a background subagent works; editing the goal bead for the Lead.
