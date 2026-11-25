@@ -21,7 +21,7 @@ The project's canonical Beads store holds all state. Select and verify it from e
 Write short, current notes. The bead is the handoff; do not repeat its content in messages.
 
 - **Batch bead (from planning):** outcome, scope, dependencies, acceptance criteria, checks to run, model.
-- **Assignment (Lead):** Lead session and Beads actor, workspace name, path and creator, Zellij tab and pane.
+- **Assignment (Lead):** Lead session and Beads actor, workspace name, path and creator, Zellij session, tab and pane IDs, and agent session ID.
 - **Closeout (Conductor):** change IDs, checks, review result, limits and open decisions.
 
 **Handoff:** when the batch passes its review and checks, the Conductor appends the closeout and reassigns the bead to the Lead's actor in one update guarded by the Conductor's actor and `in_progress` status. The bead stays `in_progress` until the Lead has integrated it. Blocked: set status `blocked` with a one-line reason. Owner needed: the Lead adds the `human` label.
@@ -34,13 +34,15 @@ The Lead does not poll. At goal start it runs [watch-goal.sh](watch-goal.sh) in 
 - a signal (handed back, `blocked`, `human`) is still present after two more checks: one reminder;
 - a Conductor is `idle` for more than 15 minutes while its bead is still `in_progress` under it.
 
-The Lead stops the watcher pane at goal end. Fallback when the watcher cannot run: each Conductor sends one `done <id>` or `blocked <id>` message.
+The Lead stops the watcher pane at goal end. This is a non-agent job; use `using-zellij` for its pane. The watcher tracks Beads changes across parallel batches and intercom presence, not completion of a single prompt. Keep it for those signals; `baton wait` cannot detect a Beads handoff. If the watcher cannot run, tell the Conductors to send one `done <id>` or `blocked <id>` wake message after they record the result on the bead.
 
 ## Delegation envelope
 
-Name each Conductor session after its batch bead ID; the watcher uses that name. Start each Conductor as a visible interactive peer with an explicit instruction to read the `conductor` skill and this contract, select the project store and work on the exact batch bead ID. A plain mention of "conductor" is not reliable skill loading. Verify startup through the pane and the matching claim in Beads. Set the model from the batch bead or the applicable policy and verify it.
+Name each Conductor session after its batch bead ID; the watcher uses that name. Start each Conductor as a visible interactive peer with an explicit instruction to read the `conductor` skill and this contract, select the project store and work on the exact batch bead ID. A plain mention of "conductor" is not reliable skill loading. Use `launching-visible-agents` to start it with `baton run --new-tab`. Verify startup with `baton read` on the returned pane and check the matching claim in Beads. Set the model from the batch bead or the applicable policy and verify it.
 
 At most 3 Conductors run at the same time. One writer per cwd: each Conductor works in its own repository-native workspace, preferably jj. Subagents are bounded helpers for read-heavy work and the one review.
+
+If you send a prompt to a baton-owned pane, send it with `baton send`, then use `baton wait` for that turn. Follow the `using-baton` exit-code table. Read the reply or blocker in the pane. Keep peer messaging for questions and decisions. A completed turn does not authorize integration: verify the handoff on the bead.
 
 ## Recursive workspace lifecycle
 
@@ -55,7 +57,7 @@ Example: the Lead creates workspace `b3` (folder `<repo-folder>-b3`) as the Cond
 3. Integrate the child's reviewed changes into the creator's line with the jj workflow. Resolve mechanical conflicts; escalate semantic ones. Preserve unrelated work.
 4. Run relevant checks on the combined state. Child checks alone do not prove integration passed.
 5. Before removal, verify integrated work is reachable, no writer still needs the workspace, and needed ignored or untracked artifacts are relocated and usable. Otherwise keep the workspace and record the blocker.
-6. Before closing the batch, the creator must preserve the handoff, briefly explain cleanup impact, stop the child session, close its recorded agent-owned tab, run `jj workspace forget <name>`, and delete the temporary workspace folder. Verify the tab, workspace registration and folder are gone. Keep user-managed resources and anything the user requests to retain. If cleanup is blocked, record the reason and next responsible owner.
+6. Before closing the batch, the creator must preserve the handoff, briefly explain cleanup impact, stop the child session, and close its recorded agent-owned tab. Use `baton close` on a baton-owned pane. If the tab remains or the launch used the Nushell exception, follow [visible-agent cleanup](../launching-visible-agents/commands.md#cleanup). Confirm the tab is gone before you run `jj workspace forget <name>` and delete the temporary workspace folder. Verify the tab, workspace registration and folder are gone. Keep user-managed resources and anything the user requests to retain. If cleanup is blocked, record the reason and next responsible owner.
 
 ## Harness mechanics
 
@@ -65,7 +67,7 @@ Lead and Conductor in one delivery use the same harness.
 | --- | --- | --- |
 | Role entry | `/skill:lead`, `/skill:conductor` | `/lead`, `/conductor` |
 | Bounded helper or reviewer | `pi-subagents` (foreground, or `bg_wait`) | `Agent` tool with explicit `model`/`effort`; never `isolation: "worktree"` |
-| Visible Conductor | Pi in a Zellij tab | `claude` in a Zellij tab |
+| Visible Conductor | `baton run --new-tab` with Pi | `baton run --new-tab` with Claude Code |
 | Peer messaging | `pi-intercom` | `ListAgents` and `SendMessage` |
 | Watcher wake | `watch-goal.sh` with `pi-intercom send` | `Monitor` running the same checks |
 
@@ -74,7 +76,8 @@ Lead and Conductor in one delivery use the same harness.
 Read the named skill when you perform its operation:
 
 - `delegating-independent-work`: isolation, naming, handoff and recovery.
-- `launching-visible-agents` and, in Pi, `pi-intercom`: visible launch, session readiness and messaging; it uses `using-zellij` for panes and tabs.
+- `launching-visible-agents`: visible launch, session readiness and cleanup. Load the `using-baton` skill (installed from the baton repo) for agent control.
+- `pi-intercom` in Pi or `ListAgents` and `SendMessage` in Claude Code: peer messages.
 - `pi-subagents` (Pi) or the `Agent` tool (Claude Code): bounded helpers and the fresh review.
 - `jujutsu`: safe jj mechanics, with this contract's scoped integration exception.
 - `project-structure`: supporting documents. Task status stays in Beads.

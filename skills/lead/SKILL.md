@@ -24,7 +24,7 @@ Run one planned goal bead to completion through Conductors. The goal bead is any
 - **Halt a batch** only when you cannot continue without the owner, or when the change would cause major rework of finished batches. Add the `human` label with the question and a recommendation. Continue all batches that are not blocked.
 - You may change beads that have not started when an earlier result requires it. Do not make major plan changes; halt and ask instead.
 - Let two Conductors message each other only when one gives a good reason that you cannot resolve as the go-between. Record it.
-- **Idle Conductor reported:** look at its pane and bead before you act. Nudge it, restart the batch, or clean up if the batch is finished.
+- **Idle Conductor reported:** check its recorded pane with `baton read` and check its bead. Nudge it, restart the batch, or clean up if the batch is finished. For a nudge sent through the pane, use `baton send` then `baton wait` as described in the contract.
 - Keep the goal bead short and current. Remove state notes that no longer matter.
 
 ## Finish

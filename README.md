@@ -16,8 +16,8 @@ Beads owns current task status; migration does not authorize queued skill work.
 - `creating-session-handoffs` — create concise handoffs between sessions
 - `delegating-independent-work` — experimental ownership, workspace, handoff and cleanup workflow for independent agents
 - `project-structure` — shared README, AGENTS, backlog, scope, documentation and reports structure for new and existing projects
-- `launching-visible-agents` — launch visible interactive Pi or Claude Code peers in Zellij tabs and verify them through intercom or Claude messaging without requiring Herdr
-- `using-zellij` — Zellij pane and tab mechanics for agents: own-tab discovery, floating job panes, named tabs and cleanup
+- `launching-visible-agents` — start visible Pi or Claude Code peers with baton and verify them through peer messaging
+- `using-zellij` — visible job panes and named shell tabs, not agent control
 
 ### Third-party skills
 

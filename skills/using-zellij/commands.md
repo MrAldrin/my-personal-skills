@@ -1,80 +1,39 @@
 # Zellij command reference
 
-Run these through the agent's shell tool. Replace paths, tab/pane IDs and names with discovered or verified values. Verify each flag with the installed command help first; the tested version is Zellij 0.45.1.
+Use these commands for terminal jobs and tabs, not for agent control. Check the installed Zellij version and each action's `--help` before use. The examples use Bash for the calling shell. Resolve IDs in the intended session, never from focus.
 
-## Inspect
-
-- `zellij --version`
-- `zellij action new-tab --help`
-- `zellij action new-pane --help`
-- `zellij action close-pane --help`
-- `zellij action list-tabs --help`
-- `zellij action list-panes --help`
-- `zellij action dump-screen --help`
-- `zellij action write-chars --help` and `zellij action write --help`
-
-The tested 0.45.1 supports `list-tabs --all --json` and `list-panes --all --json`. If `--no-focus` is absent, explain the focus change before creating a tab. If explicitly selecting another session, inspect local session-selection syntax first.
-
-Find your own tab from `ZELLIJ_PANE_ID`:
+## Find your own tab
 
 ```bash
 zellij action list-panes --all --json
 ```
 
-`ZELLIJ_PANE_ID` is numeric (for example `3`). Select the entry with `is_plugin: false` and that numeric `id`, and read its `tab_id`. Commands address the same pane as `terminal_3`.
+Match the numeric `ZELLIJ_PANE_ID` to the non-plugin entry's `id`. Read its `tab_id`. Commands address pane ID `3` as `terminal_3`.
 
 ## Floating job pane
-
-For a long-running job or program for the user, in your own tab, hidden from focus:
 
 ```bash
 zellij action new-pane --tab-id 3 --floating --no-focus --name my-job --cwd /path/to/dir -- ./run-job --flag
 ```
 
-Record the returned pane ID, then verify it:
+Record the returned pane ID. Verify the command in the pane list and inspect the screen:
 
 ```bash
 zellij action dump-screen --pane-id terminal_123
 ```
 
-Close it when done:
+After the job ends, verify ownership and explain the impact before you close it:
 
 ```bash
 zellij action close-pane --pane-id terminal_123
 ```
 
-Do not add `--stacked`: it expands the new pane over your agent's pane.
-
 ## New tab with the normal shell
 
-Create the tab without an initial command, so the normal interactive preferred shell starts. Do not add `-- <program>`, `--layout`, or `--close-on-exit`.
-
-Linux/WSL example:
+Create a shell-only tab when the user requests one. Use an explicit cwd and no focus change. Do not add an initial command, a layout or `--close-on-exit`.
 
 ```bash
 zellij action new-tab --name "my-app-review" --cwd /path/to/workspace --no-focus
 ```
 
-Native Windows example (tool uses Bash quoting):
-
-```bash
-zellij action new-tab --name "my-app-review" --cwd 'C:/path/to/workspace' --no-focus
-```
-
-Record the returned stable numeric tab ID. List panes, select the terminal pane belonging to that exact tab, and inspect its shell command, cwd and screen. A tab may contain plugins or multiple terminals: never guess the terminal ID from a tab ID or use whichever pane is focused.
-
-```bash
-zellij action list-panes --all --json
-zellij action dump-screen --pane-id terminal_123
-```
-
-Wait for the normal shell prompt before submitting input. A held command or blank screen is not a ready shell.
-
-## Submitting input to a pane
-
-`write-chars` types text into a stable pane; `write ... 13` sends Enter on the tested version. Recheck pane ownership and an idle prompt immediately before submitting. If the installed Zellij lacks explicit pane targeting, do not fall back to focused input.
-
-```bash
-zellij action write-chars --pane-id terminal_123 'some command'
-zellij action write --pane-id terminal_123 13
-```
+Record the returned numeric tab ID. Use the pane list to find the terminal with that `tab_id`. Verify the shell command, cwd and prompt in the exact pane. Do not infer a terminal ID from a tab ID. If the installed version cannot target the tab or avoid changing focus, stop and report.

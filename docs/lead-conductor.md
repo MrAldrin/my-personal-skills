@@ -44,11 +44,12 @@ Existing local skills provide mechanics:
 
 - `delegating-independent-work`
 - `launching-visible-agents`
-- `using-zellij`
+- the `using-baton` skill (from the baton repo, for agent control)
+- `using-zellij` (for the non-agent watcher pane and tab naming)
 - `jujutsu` (upstream, installed as a Pi package)
 - `project-structure`
 
-The runtime also needs Pi with `pi-intercom`, `pi-subagents`, Zellij, and jj for this intended setup. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
+The Pi runtime needs `pi-intercom`, `pi-subagents`, `baton` on PATH, Zellij 0.46.1 for baton, and jj. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
 
 The only script is the Lead's watcher, [watch-goal.sh](../skills/lead/watch-goal.sh); it needs `bd`, `jq` and `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
 

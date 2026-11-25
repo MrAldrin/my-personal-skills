@@ -1,22 +1,22 @@
 ---
 name: using-zellij
 description: >
-  Use when an agent opens a Zellij pane or tab, runs a long-running job or program for the user, or names or closes agent-created panes and tabs.
+  Use for visible terminal jobs and shell tabs in Zellij. For agent control, use using-baton.
 ---
 
 # Using Zellij
 
-**Zellij** is the multiplexer the user works in. Agents create and close only the panes and tabs they own. [commands.md](commands.md) holds the exact invocations. Run them through the agent's shell tool, and verify flags with the installed command help first.
+Use [commands.md](commands.md) for non-agent jobs and shell tabs. Create and close only resources you own. Read `using-baton` from the baton repo to control an agent.
 
 ## Find your own tab
 
 1. Read `ZELLIJ_PANE_ID` from the environment.
 2. Run `zellij action list-panes --all --json` and match that pane ID to get its `tab_id`. Environment variables alone do not prove connectivity.
-3. Never open panes in the user's focused tab unless a new tab is requested. If the own tab cannot be targeted safely, ask.
+3. Never open a job pane in the user's focused tab. If you cannot target your own tab safely, stop and ask.
 
 ## Long-running jobs and programs
 
-Run a job or program for the user in a hidden floating pane in your own tab, never as a hidden background process:
+Run a job or program for the user in a visible floating terminal pane in your own tab without changing focus, never as a hidden background process:
 
 ```bash
 zellij action new-pane --tab-id <tab> --floating --no-focus --name <job> --cwd <dir> -- <command>
@@ -31,13 +31,12 @@ zellij action new-pane --tab-id <tab> --floating --no-focus --name <job> --cwd <
 
 ## New tabs
 
-Open a new tab only when the user requests one, for example for a visible agent.
+Open a shell-only tab only when the user requests one.
 
 - Name it `<project>-<task>`, using the same task as the workspace it serves. Keep the name at most 25 characters: if longer, abbreviate the project to its initials, then shorten the task.
 - Create it with an explicit cwd and no initial command, so the normal interactive preferred shell starts. Do not add `-- <program>`, `--layout`, or `--close-on-exit`.
-- Use no-focus where the installed version supports it.
-- Record the stable numeric tab ID, resolve its terminal pane from that exact tab, and verify shell identity, cwd and shell prompt before submitting input.
-- Closing a tab or pane is destructive: verify ownership and disposability first, and never use focus-dependent cleanup.
+- Use no-focus. Record the numeric tab ID and verify the shell and cwd in its exact pane.
+- Before closing a tab or pane, explain the impact and verify ownership and disposability. Never use focus-dependent cleanup.
 
 ## Inspect and boundaries
 

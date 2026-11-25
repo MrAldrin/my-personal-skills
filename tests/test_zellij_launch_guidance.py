@@ -21,29 +21,31 @@ class ZellijLaunchGuidanceTests(unittest.TestCase):
         self.assertEqual(frontmatter_name(LAUNCH), "launching-visible-agents")
         self.assertEqual(frontmatter_name(ZELLIJ), "using-zellij")
 
-    def test_new_tab_examples_start_normal_shell(self) -> None:
+    def test_shell_tab_examples_do_not_run_an_initial_command(self) -> None:
         content = (ZELLIJ / "commands.md").read_text(encoding="utf-8")
-        commands = re.findall(
-            r"(?m)^`?(zellij action new-tab [^\n`]+)", content, re.MULTILINE
-        )
-        self.assertGreaterEqual(len(commands), 2)
+        commands = re.findall(r"(?m)^zellij action new-tab .+$", content)
+        self.assertTrue(commands)
         for command in commands:
-            self.assertNotIn(" -- ", command)
-            self.assertNotIn("--close-on-exit", command)
-            self.assertNotIn("--layout", command)
+            self.assertIn("--no-focus", command)
+            self.assertIn("--cwd", command)
+            for option in (" -- ", "--close-on-exit", "--layout"):
+                self.assertNotIn(option, command)
+        self.assertNotIn("zellij action write", content)
 
-    def test_floating_job_pane_is_hidden_owned_and_not_stacked(self) -> None:
-        content = (ZELLIJ / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn(
-            "zellij action new-pane --tab-id <tab> --floating --no-focus --name <job> --cwd <dir> -- <command>",
-            content,
-        )
-        self.assertIn("zellij action close-pane --pane-id <id>", content)
-        self.assertIn("Do not use `--stacked`", content)
-        self.assertIn("never as a hidden background process", content)
+    def test_floating_job_pane_uses_own_tab_without_focus(self) -> None:
+        skill = (ZELLIJ / "SKILL.md").read_text(encoding="utf-8")
         commands = (ZELLIJ / "commands.md").read_text(encoding="utf-8")
-        self.assertIn("--floating --no-focus", commands)
-        self.assertIn("close-pane --pane-id", commands)
+        for content in (skill, commands):
+            self.assertRegex(
+                content, r"zellij action new-pane --tab-id \S+ --floating --no-focus"
+            )
+            self.assertIn("close-pane --pane-id", content)
+        for rule in (
+            "Do not use `--stacked`",
+            "never as a hidden background process",
+            "Never open a job pane in the user's focused tab",
+        ):
+            self.assertIn(rule, skill)
 
     def test_own_tab_and_tab_naming_rules_live_in_using_zellij(self) -> None:
         content = (ZELLIJ / "SKILL.md").read_text(encoding="utf-8")
@@ -54,38 +56,61 @@ class ZellijLaunchGuidanceTests(unittest.TestCase):
         self.assertIn("25 characters", content)
         self.assertIn("initials", content)
 
-    def test_exact_pane_submission_and_shell_quoting(self) -> None:
+    def test_default_launch_uses_baton_for_both_harnesses(self) -> None:
         content = (LAUNCH / "commands.md").read_text(encoding="utf-8")
-        self.assertIn("write-chars --pane-id terminal_123", content)
-        self.assertIn("write --pane-id terminal_123 13", content)
-        self.assertIn("Nushell", content)
-        self.assertIn("PowerShell", content)
-        self.assertIn("foreground", content)
-        self.assertIn("windows-fullscreen-mouse/launch.mjs", content)
-        self.assertIn("Linux/WSL", content)
+        default, _, _ = content.partition("## Native Windows Nushell exception")
+        for agent in ("pi", "claude"):
+            with self.subTest(agent=agent):
+                self.assertRegex(
+                    default, rf"(?m)^baton .* run .*--new-tab .*--agent {agent} --"
+                )
+        self.assertIn('baton send "$pane" "$prompt" && baton wait "$pane"', default)
+        self.assertIn('baton read "$pane"', default)
+        self.assertNotIn("zellij action", default)
 
-    def test_skill_requires_shell_and_exit_verification(self) -> None:
+    def test_raw_agent_input_is_only_for_the_nushell_exception(self) -> None:
+        content = (LAUNCH / "commands.md").read_text(encoding="utf-8")
+        _, marker, tail = content.partition("## Native Windows Nushell exception")
+        self.assertTrue(marker)
+        exception, _, rest = tail.partition("## Verify shell lifecycle")
+        self.assertIn("does not have a Nushell quoting adapter", exception)
+        self.assertIn("windows-fullscreen-mouse/launch.mjs", exception)
+        for action in ("write-chars", "write"):
+            command = f"zellij action {action} --pane-id terminal_123 "
+            self.assertIn(command, exception)
+            self.assertEqual(content.count(f"zellij action {action} "), 1)
+        self.assertIn('baton close "$pane"', rest)
+        self.assertIn("close-tab --tab-id <recorded-tab-id>", rest)
+
+    def test_launch_requires_interactive_shell_and_peer_readiness(self) -> None:
         content = (LAUNCH / "SKILL.md").read_text(encoding="utf-8")
         for phrase in (
-            "normal interactive",
-            "shell prompt",
-            "foreground",
-            "stable",
-            "disposable",
-            "ping",
+            "using-baton",
+            "normal interactive shell first",
+            "foreground child",
+            "return to the shell prompt",
+            "disposable tab",
+            "two-way ping",
             "openProjectPaneIfMissing",
-            "Closing the pane on Pi exit is not an equivalent substitute",
-            "held-command",
-            "Preserve",
+            "--close-on-exit",
+            "matching claim in Beads",
         ):
             self.assertIn(phrase, content)
-        self.assertIn("Do not replace", content)
-        self.assertIn("--close-on-exit", content)
+        self.assertNotIn("zellij action", content)
 
-    def test_launch_skill_delegates_zellij_mechanics(self) -> None:
-        content = (LAUNCH / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("../using-zellij/SKILL.md", content)
-        self.assertNotIn("list-panes --all --json", content)
+    def test_delivery_contract_distinguishes_wait_from_handoff(self) -> None:
+        contract = (SKILLS / "lead" / "workflow.md").read_text(encoding="utf-8")
+        for command in (
+            "baton run --new-tab",
+            "baton read",
+            "baton send",
+            "baton wait",
+            "baton close",
+        ):
+            self.assertIn(command, contract)
+        self.assertIn("verify the handoff on the bead", contract)
+        self.assertIn("watch-goal.sh", contract)
+        self.assertNotIn("zellij action", contract)
 
 
 if __name__ == "__main__":

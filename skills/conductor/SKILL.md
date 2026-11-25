@@ -20,12 +20,13 @@ Own one batch bead from start to handoff. The batch bead holds the context you n
 - Use bounded subagents on a cheap model only for read-heavy work, such as checking many files. They return short findings; you make the decisions.
 - Run subagents in the foreground. If you start one in the background, call `bg_wait` until it finishes. Never go idle while a subagent works: the Lead's watcher reports a long idle session as stuck.
 - **Unexpected issues:** fix small ones yourself, such as a bug the plan did not foresee. Ask the Lead about larger ones through peer messaging, with a recommendation, and record the answer on the bead. If the Lead halts the batch, stop and record your state.
+- For an authorized visible peer, use `launching-visible-agents` and `using-baton` from the baton repo. Keep peer messaging for questions and decisions.
 - Record only short progress and decisions on the batch bead. Send no routine progress messages.
 
 ## Finish
 
 - Run the bead's checks. Run **one** fresh-context independent review when the work is complete, not after each step. Fix its findings; re-review only material changes.
-- Record change IDs, checks, review result and limits on the bead. Then hand back: reassign the bead to the Lead's actor and keep it `in_progress` (contract). Send no completion message; the watcher tells the Lead. The Lead integrates and cleans up.
+- Record change IDs, checks, review result and limits on the bead. Then hand back: reassign the bead to the Lead's actor and keep it `in_progress` (contract). The watcher tells the Lead; send a wake message only if the Lead says the watcher is unavailable (contract). The Lead integrates and cleans up.
 - Manual session with no Lead: integrate into the agreed destination, run checks on the combined result and close the bead yourself.
 
 **Common traps:** using subagents for implementation by default; repeated reviews; going idle while a background subagent works; editing the goal bead for the Lead.
