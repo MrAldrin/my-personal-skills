@@ -51,7 +51,7 @@ Existing local skills provide mechanics:
 
 The Pi runtime needs `pi-intercom`, `pi-subagents`, `baton` on PATH, Zellij 0.46.1 for baton, and jj. Exact models/reasoning come from your current policy or explicit selection; the Lead verifies peer settings. Missing capabilities block the affected dispatch, not discussion/planning. A different terminal or launch surface requires your approval, not a silent fallback.
 
-The only script is the Lead's watcher, [watch-goal.sh](../skills/lead/watch-goal.sh); it needs `bd`, `jq` and `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
+The only script is the Lead's watcher, [watch-goal.sh](../skills/lead/watch-goal.sh); it needs `bd`, `jq`, `baton` and, for a Pi Lead, `pi-intercom`. No launcher, hooks, dashboard, state database or global-policy edits are added. Existing project structure is reused, not automatically migrated.
 
 ## Records
 

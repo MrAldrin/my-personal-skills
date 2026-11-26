@@ -28,13 +28,19 @@ Write short, current notes. The bead is the handoff; do not repeat its content i
 
 ## Watcher
 
-The Lead does not poll. At goal start it runs [watch-goal.sh](watch-goal.sh) in a floating pane in its own tab (`using-zellij`), with the goal bead ID, the Lead's intercom name and the Beads store. Every 3 minutes the script reads the goal bead's child beads and `pi-intercom list --json`. It sends the Lead one short `pi-intercom send` line only when:
+The Lead does not poll. At goal start it runs [watch-goal.sh](watch-goal.sh) with the goal bead ID, the Lead's Beads actor and the Beads store. A Pi Lead runs it in a floating pane in its own tab (`using-zellij`); the script sends each message with `pi-intercom send`. A Claude Code Lead runs `watch-goal.sh <goal> <lead-actor> <beads-dir> --no-intercom` under its `Monitor` tool. Every message is also one stdout line, so each line wakes the Claude Lead.
+
+Every 3 minutes the script reads the goal bead's child beads and `baton list` (the Zellij session from `$ZELLIJ_SESSION_NAME`, or `BATON_SESSION`). The Conductor pane has the batch bead ID as its name, and baton reports its program state for Pi and Claude Code alike. The script reports only when:
 
 - a batch bead's status, assignee or `human` label changed;
 - a signal (handed back, `blocked`, `human`) is still present after two more checks: one reminder;
-- a Conductor is `idle` for more than 15 minutes while its bead is still `in_progress` under it.
+- while a bead is `in_progress` under its Conductor:
+  - the pane is `idle` or `done` for more than 15 minutes (`IDLE_LIMIT`);
+  - the pane changes to `blocked` (the agent waits for a person) or `exited` (the agent process ended), with one reminder after two more checks;
+  - no pane has the bead ID as its name: "session not found", once;
+- all batch beads are closed: "all batches closed", then the script exits.
 
-The Lead stops the watcher pane at goal end. This is a non-agent job; use `using-zellij` for its pane. The watcher tracks Beads changes across parallel batches and intercom presence, not completion of a single prompt. Keep it for those signals; `baton wait` cannot detect a Beads handoff. If the watcher cannot run, tell the Conductors to send one `done <id>` or `blocked <id>` wake message after they record the result on the bead.
+The Lead stops the watcher pane at goal end. This is a non-agent job; use `using-zellij` for its pane. The watcher tracks Beads changes and Conductor pane state across parallel batches, not completion of a single prompt. Keep it for those signals; `baton wait` cannot detect a Beads handoff. If the watcher cannot run, tell the Conductors to send one `done <id>` or `blocked <id>` wake message after they record the result on the bead.
 
 ## Delegation envelope
 
@@ -69,7 +75,7 @@ Lead and Conductor in one delivery use the same harness.
 | Bounded helper or reviewer | `pi-subagents` (foreground, or `bg_wait`) | `Agent` tool with explicit `model`/`effort`; never `isolation: "worktree"` |
 | Visible Conductor | `baton run --new-tab` with Pi | `baton run --new-tab` with Claude Code |
 | Peer messaging | `pi-intercom` | `ListAgents` and `SendMessage` |
-| Watcher wake | `watch-goal.sh` with `pi-intercom send` | `Monitor` running the same checks |
+| Watcher wake | `watch-goal.sh <goal> <lead-actor> <beads-dir>` in a floating pane; wakes through `pi-intercom send` | `Monitor` running `watch-goal.sh <goal> <lead-actor> <beads-dir> --no-intercom`; each stdout line wakes the Lead |
 
 ## Reuse mechanics on demand
 
