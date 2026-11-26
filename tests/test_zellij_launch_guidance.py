@@ -58,37 +58,31 @@ class ZellijLaunchGuidanceTests(unittest.TestCase):
 
     def test_default_launch_uses_baton_for_both_harnesses(self) -> None:
         content = (LAUNCH / "commands.md").read_text(encoding="utf-8")
-        default, _, _ = content.partition("## Native Windows Nushell exception")
+        default, _, _ = content.partition("## Cleanup")
         for agent in ("pi", "claude"):
             with self.subTest(agent=agent):
                 self.assertRegex(
-                    default, rf"(?m)^baton .* run .*--new-tab .*--agent {agent} --"
+                    content, rf"(?m)^baton .* run .*--new-tab .*--agent {agent} --"
                 )
-        self.assertIn('baton send "$pane" "$prompt" && baton wait "$pane"', default)
-        self.assertIn('baton read "$pane"', default)
+        self.assertIn('baton send "$pane" "$prompt" && baton wait "$pane"', content)
+        self.assertIn('baton read "$pane"', content)
         self.assertNotIn("zellij action", default)
 
-    def test_raw_agent_input_is_only_for_the_nushell_exception(self) -> None:
+    def test_raw_zellij_is_only_for_tab_cleanup(self) -> None:
         content = (LAUNCH / "commands.md").read_text(encoding="utf-8")
-        _, marker, tail = content.partition("## Native Windows Nushell exception")
+        self.assertNotIn("Nushell exception", content)
+        self.assertNotIn("zellij action write", content)
+        _, marker, cleanup = content.partition("## Cleanup")
         self.assertTrue(marker)
-        exception, _, rest = tail.partition("## Verify shell lifecycle")
-        self.assertIn("does not have a Nushell quoting adapter", exception)
-        self.assertIn("windows-fullscreen-mouse/launch.mjs", exception)
-        for action in ("write-chars", "write"):
-            command = f"zellij action {action} --pane-id terminal_123 "
-            self.assertIn(command, exception)
-            self.assertEqual(content.count(f"zellij action {action} "), 1)
-        self.assertIn('baton close "$pane"', rest)
-        self.assertIn("close-tab --tab-id <recorded-tab-id>", rest)
+        self.assertIn('baton close "$pane"', cleanup)
+        self.assertIn("close-tab --tab-id <recorded-tab-id>", cleanup)
 
-    def test_launch_requires_interactive_shell_and_peer_readiness(self) -> None:
+    def test_launch_runs_agent_directly_and_checks_readiness(self) -> None:
         content = (LAUNCH / "SKILL.md").read_text(encoding="utf-8")
         for phrase in (
             "using-baton",
-            "normal interactive shell first",
-            "foreground child",
-            "return to the shell prompt",
+            "runs the agent directly, without a shell",
+            "baton close",
             "disposable tab",
             "two-way ping",
             "openProjectPaneIfMissing",
@@ -97,6 +91,7 @@ class ZellijLaunchGuidanceTests(unittest.TestCase):
         ):
             self.assertIn(phrase, content)
         self.assertNotIn("zellij action", content)
+        self.assertNotIn("return to the shell prompt", content)
 
     def test_delivery_contract_distinguishes_wait_from_handoff(self) -> None:
         contract = (SKILLS / "lead" / "workflow.md").read_text(encoding="utf-8")

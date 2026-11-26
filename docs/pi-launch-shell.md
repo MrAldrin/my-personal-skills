@@ -1,5 +1,7 @@
 # Interactive shell launch for Pi peers
 
+> **Superseded 2026-11-26.** baton 0.1.1 (owner fix) runs the `--new-tab` agent directly in the tab, without a shell, because typed command lines broke in Nushell. The shell-first rule below no longer applies; current guidance is in `skills/launching-visible-agents`. This page stays as history.
+
 ## Ownership and status
 
 - Owner: `pi-launch-skill`, session `01a16da9-38fe-7509-a054-8218fbe8a916` (`gpt-6.1-sol`, reasoning `low`).

@@ -17,7 +17,7 @@ For workspaces, ownership, handoff and recovery, read `delegating-independent-wo
 1. Read `using-baton`, [commands.md](commands.md) and your harness's messaging rules. Verify the intended Zellij session, installed versions, and local launcher options. Missing baton or a session that cannot open a tab blocks this route. Do not silently switch launch surfaces.
 2. Choose the cwd. Before concurrent edits, create a repository-native workspace. No new workspace is needed for an idle or read-only peer.
 3. Choose the session name, model and reasoning from the task or policy. Follow [using-zellij](../using-zellij/SKILL.md) for tab names. Preserve the local interactive launcher, including the existing Node launcher if needed on Windows. Use the Linux/WSL launcher in Linux/WSL.
-4. Use `baton run --new-tab` with the harness and foreground command from [commands.md](commands.md). It starts the normal interactive shell first and submits the agent as a foreground child. Exiting the agent must return to the shell prompt. Do not replace the shell, start a held-command tab, use `--close-on-exit`, or use print, JSON, RPC, no-session or shell-background mode. Keep the extensions needed for messaging enabled. For the existing native Windows Nushell Pi route, see the [shell-specific exception](commands.md#native-windows-nushell-exception).
+4. Use `baton run --new-tab` with the harness and agent command from [commands.md](commands.md). The tab runs the agent directly, without a shell, so every default shell (including Nushell on Windows) works. When the agent exits, the pane stays as an exited program until `baton close`. Do not use `--close-on-exit`, or print, JSON, RPC, no-session or shell-background mode. Keep the extensions needed for messaging enabled.
 5. Record the Zellij session, tab and pane IDs and the agent session ID. Inspect the exact pane and verify the cwd and launcher. A new tab does not prove the peer is ready.
 
 ## Verify, then delegate
@@ -32,6 +32,6 @@ For a role with a Beads handoff, put the role instructions, exact bead ID and st
 
 ## Verify lifecycle and recover
 
-- To validate a new route, get approval for a disposable tab. Follow [the lifecycle check](commands.md#verify-shell-lifecycle). Do not test exit on a live user peer.
+- To validate a new route, get approval for a disposable tab. Follow [the route check](commands.md#verify-the-launch-route). Do not test exit on a live user peer.
 - If startup is slow or fails, inspect the recorded pane and refresh the peer roster before you retry. If launch fails before it returns IDs, check for a partially created tab; do not guess ownership or create a duplicate.
-- After acceptance, the lifecycle owner preserves the handoff, explains the impact, and closes the owned pane with `baton close` unless the user wants to keep it. Check that the tab is gone. If it remains, or if this was the Nushell exception, follow [cleanup](commands.md#cleanup). After a restart, verify the recorded IDs against both rosters before you act.
+- After acceptance, the lifecycle owner preserves the handoff, explains the impact, and closes the owned pane with `baton close` unless the user wants to keep it. Check that the tab is gone. If it remains, follow [cleanup](commands.md#cleanup). After a restart, verify the recorded IDs against both rosters before you act.

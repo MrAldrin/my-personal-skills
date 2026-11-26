@@ -52,7 +52,7 @@ Not yet agreed in detail.
 - The role is in the system prompt from the first message; the agent cannot forget to read it.
 - pi-subagents agent files are for subagents only. Visible sessions get the same building blocks through `pi` flags.
 - The owner can still start a conductor by hand: run the same launcher, or say "Conduct batch: B3" in a normal session (weaker fallback through AGENTS.md).
-- Must fit the shell-first Zellij launch now in `launching-visible-agents` (change `zsxytqyw`): open the preferred shell, then start Pi in it.
+- Must fit the current launch in `launching-visible-agents`: `baton run --new-tab` runs the agent directly in the tab (baton 0.1.1; the earlier shell-first launch from change `zsxytqyw` is superseded).
 
 ## Research summary
 
