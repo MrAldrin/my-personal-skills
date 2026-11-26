@@ -12,7 +12,7 @@ baton --session "$session" run --name "$name" --new-tab "$tab_name" --cwd "$work
   claude --name "$name" --model "$model" --effort "$effort" "$prompt"
 ```
 
-Run only the line for your harness. Pass one argument per word after `--`; do not pass a pre-quoted shell command. The new tab runs this command directly, so no shell parses it: any default shell (Bash, fish, Nushell, PowerShell, cmd.exe) works. On Windows, start a local Node-based Pi launcher by passing `node /path/to/launch.mjs` in place of `pi`, while keeping `--agent pi`. Do not use a Bash or Windows launcher path in another environment.
+Run only the line for your harness. Pass one argument per word after `--`; do not pass a pre-quoted shell command. The new tab runs this command directly, so no shell parses it: any default shell (Bash, fish, Nushell, PowerShell, cmd.exe) works. On Windows, start a local Node-based Pi launcher by passing `node /path/to/launch.mjs` in place of `pi`, while keeping `--agent pi` (baton 0.1.4 and later; earlier versions put `--session-id` before the script and Node refuses it). Do not use a Bash or Windows launcher path in another environment.
 
 `run` starts the command as the tab's own program (baton 0.1.1 and later). There is no shell behind the agent: when the agent exits, the pane shows it as exited until you close it. `run` does not prove that the agent is ready. Use the returned pane ID with `baton read "$pane" --lines 40`. Use `baton list --owned` to verify the pane record. Keep using the same `--session` when it is not the default.
 
