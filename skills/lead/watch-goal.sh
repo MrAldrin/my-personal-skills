@@ -5,7 +5,8 @@
 #   --no-intercom: print only (Claude Code Lead under its Monitor tool).
 # Every message line goes to stdout. Without --no-intercom it is also sent
 # with pi-intercom. Conductor panes must be named after their batch bead ID
-# (baton run --name <bead-id>); their state comes from `baton list`.
+# (baton run --name <bead-id>); their state comes from `baton list`
+# (baton 0.1.3 or later: earlier versions show the live title as name).
 # Env: WATCH_INTERVAL (s, default 180), IDLE_LIMIT (s, default 900),
 #      BATON (command, default baton), BATON_SESSION (Zellij session, default
 #      $ZELLIJ_SESSION_NAME; required outside Zellij), PI_INTERCOM (command, default: pi-intercom on
