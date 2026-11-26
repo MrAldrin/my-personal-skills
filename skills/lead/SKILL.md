@@ -14,6 +14,7 @@ Run one planned goal bead to completion through Conductors. The goal bead is any
 - Confirm Lead, the goal bead ID, repository and store. Read project instructions, the goal bead and every child batch bead.
 - Each batch bead needs acceptance criteria, dependencies, checks to run and a model. Fill a small gap with a recorded assumption; ask the owner only when the gap changes the outcome. With no model, use the applicable model policy.
 - If no planned goal bead with child beads exists, ask for it. Do not invent one.
+- Find the Zellij session: your own (`ZELLIJ_SESSION_NAME`), or, outside Zellij such as the Claude desktop app, the session the owner names. Ask if none is named. Record it on the goal bead; all Conductors run there.
 - Create the goal integration line and bookmark. Start the watcher (see the contract).
 
 ## Run the goal

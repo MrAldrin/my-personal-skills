@@ -8,14 +8,16 @@
 # (baton run --name <bead-id>); their state comes from `baton list`.
 # Env: WATCH_INTERVAL (s, default 180), IDLE_LIMIT (s, default 900),
 #      BATON (command, default baton), BATON_SESSION (Zellij session, default
-#      $ZELLIJ_SESSION_NAME), PI_INTERCOM (command, default: pi-intercom on
+#      $ZELLIJ_SESSION_NAME; required outside Zellij), PI_INTERCOM (command, default: pi-intercom on
 #      PATH, else the Pi npm package).
 set -u
 goal=${1:?goal bead id}; lead=${2:?lead name}; store=${3:?beads dir}
 intercom=1; [ "${4:-}" = --no-intercom ] && intercom=0
 interval=${WATCH_INTERVAL:-180}; idle_limit=${IDLE_LIMIT:-900}
-baton=${BATON:-baton}; session_arg=()
-[ -n "${BATON_SESSION:-}" ] && session_arg=(--session "$BATON_SESSION")
+baton=${BATON:-baton}
+session=${BATON_SESSION:-${ZELLIJ_SESSION_NAME:-}}
+[ -n "$session" ] || { echo "watch-goal: set BATON_SESSION to the Conductors' Zellij session" >&2; exit 2; }
+session_arg=(--session "$session")
 if [ -n "${PI_INTERCOM:-}" ]; then ic=$PI_INTERCOM
 elif command -v pi-intercom >/dev/null; then ic=pi-intercom
 else ic="node $HOME/.pi/agent/npm/node_modules/pi-intercom/cli.mjs"; fi

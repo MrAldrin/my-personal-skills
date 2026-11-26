@@ -10,6 +10,17 @@ zellij action list-panes --all --json
 
 Match the numeric `ZELLIJ_PANE_ID` to the non-plugin entry's `id`. Read its `tab_id`. Commands address pane ID `3` as `terminal_3`.
 
+## Outside Zellij
+
+Without `ZELLIJ_PANE_ID`, add the user's session to every command, and start each job in its own new tab:
+
+```bash
+zellij list-sessions --no-formatting
+zellij --session "$session" action new-tab --name my-job --cwd /path/to/dir --no-focus -- ./run-job --flag
+```
+
+Record the returned tab ID, then find the job's pane with `zellij --session "$session" action list-panes --all --json`. Check `--help` first: the installed version must accept a command for `new-tab`, otherwise stop and report.
+
 ## Floating job pane
 
 ```bash

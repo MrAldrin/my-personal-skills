@@ -30,7 +30,9 @@ Write short, current notes. The bead is the handoff; do not repeat its content i
 
 The Lead does not poll. At goal start it runs [watch-goal.sh](watch-goal.sh) with the goal bead ID, the Lead's Beads actor and the Beads store. A Pi Lead runs it in a floating pane in its own tab (`using-zellij`); the script sends each message with `pi-intercom send`. A Claude Code Lead runs `watch-goal.sh <goal> <lead-actor> <beads-dir> --no-intercom` under its `Monitor` tool. Every message is also one stdout line, so each line wakes the Claude Lead.
 
-Every 3 minutes the script reads the goal bead's child beads and `baton list` (the Zellij session from `$ZELLIJ_SESSION_NAME`, or `BATON_SESSION`). The Conductor pane has the batch bead ID as its name, and baton reports its program state for Pi and Claude Code alike. The script reports only when:
+A Lead outside Zellij, such as the Claude desktop app, sets `BATON_SESSION=<session>` for the script, the session it starts Conductors in. Without a session the script stops with an error.
+
+Every 3 minutes the script reads the goal bead's child beads and `baton list` (the Zellij session from `BATON_SESSION`, or `$ZELLIJ_SESSION_NAME`). The Conductor pane has the batch bead ID as its name, and baton reports its program state for Pi and Claude Code alike. The script reports only when:
 
 - a batch bead's status, assignee or `human` label changed;
 - a signal (handed back, `blocked`, `human`) is still present after two more checks: one reminder;
@@ -75,7 +77,8 @@ Lead and Conductor in one delivery use the same harness.
 | Bounded helper or reviewer | `pi-subagents` (foreground, or `bg_wait`) | `Agent` tool with explicit `model`/`effort`; never `isolation: "worktree"` |
 | Visible Conductor | `baton run --new-tab` with Pi | `baton run --new-tab` with Claude Code |
 | Peer messaging | `pi-intercom` | `ListAgents` and `SendMessage` |
-| Watcher wake | `watch-goal.sh <goal> <lead-actor> <beads-dir>` in a floating pane; wakes through `pi-intercom send` | `Monitor` running `watch-goal.sh <goal> <lead-actor> <beads-dir> --no-intercom`; each stdout line wakes the Lead |
+| Watcher wake | `watch-goal.sh <goal> <lead-actor> <beads-dir>` in a floating pane; wakes through `pi-intercom send` | `Monitor` running `BATON_SESSION=<session> watch-goal.sh <goal> <lead-actor> <beads-dir> --no-intercom`; each stdout line wakes the Lead |
+| Outside Zellij | Not supported: a Pi Lead runs in Zellij | Desktop app or plain terminal: name the session on every `baton` call and in `BATON_SESSION` |
 
 ## Reuse mechanics on demand
 

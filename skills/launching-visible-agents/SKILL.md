@@ -14,7 +14,7 @@ For workspaces, ownership, handoff and recovery, read `delegating-independent-wo
 
 ## Discover and launch
 
-1. Read `using-baton`, [commands.md](commands.md) and your harness's messaging rules. Verify the intended Zellij session, installed versions, and local launcher options. Missing baton or a session that cannot open a tab blocks this route. Do not silently switch launch surfaces.
+1. Read `using-baton`, [commands.md](commands.md) and your harness's messaging rules. Verify the intended Zellij session, installed versions, and local launcher options. Missing baton or a session that cannot open a tab blocks this route. Do not silently switch launch surfaces. Outside Zellij (no `ZELLIJ_PANE_ID`, for example the Claude desktop app), use the session the user names, as in [using-zellij](../using-zellij/SKILL.md#outside-zellij), and pass `--session` to every baton call.
 2. Choose the cwd. Before concurrent edits, create a repository-native workspace. No new workspace is needed for an idle or read-only peer.
 3. Choose the session name, model and reasoning from the task or policy. Follow [using-zellij](../using-zellij/SKILL.md) for tab names. Preserve the local interactive launcher, including the existing Node launcher if needed on Windows. Use the Linux/WSL launcher in Linux/WSL.
 4. Use `baton run --new-tab` with the harness and agent command from [commands.md](commands.md). The tab runs the agent directly, without a shell, so every default shell (including Nushell on Windows) works. When the agent exits, the pane stays as an exited program until `baton close`. Do not use `--close-on-exit`, or print, JSON, RPC, no-session or shell-background mode. Keep the extensions needed for messaging enabled.
